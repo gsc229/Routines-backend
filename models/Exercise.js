@@ -17,7 +17,7 @@ const Exercise_Schema = new mongoose.Schema({
     maxlength: [50, "Cannot exceed 50 characters"],
     minlength: [3, "Cannot be less than 3 characters"]
   },
-  user: {
+  original_creator: {
     type: mongoose.Types.ObjectId,  
     required: true, 
     ref: 'User'
