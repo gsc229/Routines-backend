@@ -12,6 +12,10 @@ const Exercise_Schema = new mongoose.Schema({
     type: String, 
     enum: ["Endurance", "Strength", "Flexibility", "Balance"]
   },
+  difficulty: {
+    type: String,
+    enum: ["Easy", "Medium", "Hard", "Extreme"]
+  },
   description: {
     type: String,
     maxlength: [50, "Cannot exceed 50 characters"],

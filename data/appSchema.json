@@ -1,0 +1,63 @@
+{
+  "exercise": {
+    "id": "20923elkwdslk2q",
+    "name": "Squats",
+    "category": "Strength - note: will be either Endurance, Strenght, Flexibility, or Balance",
+    "creator": "23409aawejiaslkj",
+    "muscleGroup": "Legs",
+    "targetMuscle": "Glutes",
+    "description": "Hold a barbell over shoulders and squat down",
+    "equipment": "Squat rack, power rack, barbell, bumper plates",
+    "videoUrl": "www.youtube/23098r320o2wlkjso9i"
+  },
+  "exercise_record": {
+    "id": "20893uskjdhfw0",
+    "excercise": "20923elkwdslk2q",
+    "routine": "1324230abc",
+    "user": "982ujwsois",
+    "reps":10,
+    "sets": 4,
+    "date": "5/4/2020"
+  },
+  "routine_exercise": {
+    "id": "20394uywopalkk",
+    "exercise": "20923elkwdslk2q",
+    "targetReps": 10,
+    "targetSets": 4,
+    "targetWeightKg": 50,
+    "targetTime": null,
+    "targetDistanceKm": null,
+    "actualReps": 10,
+    "actualSets": 4,
+    "actualWeightKg": 50,
+    "actualTime": null,
+    "actualDistanceKm": null,
+    "routine": "1324230abc",
+    "routine_day": "34alsdflk"
+  },
+  "routine_day": {
+    "id": "34alsdflk",
+    "name": "Back",
+    "routine": "1324230abc",
+    "week": "1312432",
+    "dayOfWeek": "monday",
+    "excercises": [{"exercise": "20923elkwdslk2q", "sets": 4, "reps": 10}]
+  },
+  "routine_week": {
+    "id": "1312432",
+    "routine": "1324230abc",
+    "days": []
+  },
+  "routine": {
+    "id": "1324230abc",
+    "user": "982ujwsois",
+    "name": "Full Body Extreme",
+    "target_muscle_group": "Full Body",
+    "type": "",
+    "days": [],
+    "weeks": [],
+    "difficulty": "Medium"
+  }
+  
+}
+

@@ -19,6 +19,10 @@ if(process.env.NODE_ENV==='development'){
 }
 
 // Bring the route files to pass the entry point routes of each resource
+const authRoutes = require('./routes/auth')
+const userRoutes = require('./routes/users')
+const exerciseRoutes = require('./routes/exercises')
+const routineExercises = require('./routes/routine_exercises')
 
 // Initiate the app
 const app = express()
@@ -32,7 +36,18 @@ app.use(helmet())
 // Enable CORS
 app.use(cors())
 
-// Mount the routers
+// Mount the routers (/api/v.1/<resource>)
+app.use('/api/v1.0/auth', authRoutes)
+app.use('/api/v1.0/users', userRoutes)
+app.use('/api/v1.0/exercises', exerciseRoutes)
+app.use('/api/v1.0/routine-exercises', routineExercises)
+
+// test route
+app.get('/test', (req, res) => {
+  res.send(
+    '<h1>Server Status</h1><h2>Server running succesfully.</h2><p>Deployment is all good, continue working.. nothing to see here.</p>'
+  );
+});
 
 const PORT = process.env.PORT || 5000
 
