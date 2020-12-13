@@ -44,9 +44,21 @@ const Routine_Schema = new mongoose.Schema({
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
       minlength: [3, "Cannot be less than 3 characters"]
-    },
-    weeks: [{type: mongoose.Types.ObjectId, ref: 'RoutineWeeks'}]
+    }
     
+},
+{
+  toJSON: {virtuals: true},
+  toObject: {virtuals: true}
+})
+
+
+/* Virtuals */
+Routine_Schema.virtual('weeks', {
+  ref: 'RoutineWeek',
+  localField: '_id',
+  foreignField: 'routine',
+  justOne: false
 })
 
 module.exports = mongoose.model('Routine', Routine_Schema)
