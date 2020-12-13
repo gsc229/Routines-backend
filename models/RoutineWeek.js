@@ -71,6 +71,10 @@ const RoutineWeek_Schema = new mongoose.Schema({
     }
   }
   
+},
+{
+  toJSON: {virtuals: true},
+  toObject: {virtuals: true}
 })
 
 module.exports = mongoose.model('RoutineWeek', RoutineWeek_Schema)

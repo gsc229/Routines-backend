@@ -31,7 +31,13 @@ exports.createRoutine = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getAllRoutines = asyncHandler(async (req, res, next) => {
 
-  Routine.find().exec((err, routines) => {
+  Routine
+  .find()
+  .populate({
+    path: 'weeks',
+    select: 'week_number sunday'
+  })
+  .exec((err, routines) => {
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
