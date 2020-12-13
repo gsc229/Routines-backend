@@ -25,8 +25,7 @@ exports.createRoutine = asyncHandler(async (req, res, next) => {
   
 });
 
-
-// @desc    Create a new routine - required fields: original_creator, user, name
+// @desc    Get all routines
 // @route   GET /api/v1.0/routines
 // @access  Private
 exports.getAllRoutines = asyncHandler(async (req, res, next) => {
@@ -53,7 +52,23 @@ exports.getAllRoutines = asyncHandler(async (req, res, next) => {
   
 });
 
+// @desc    Delete a routine and all it's children
+// @route   DELETE /api/v1.0/routines/:routineId
+// @access  Private
+exports.deleteRoutine = asyncHandler(async (req, res, next) => {
 
+  Routine
+  .deleteOne({_id: req.params.routineId}, (err, routine) => {
+    console.log({err, routine})
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+
+    res.status(201).send({ success: true, data: routine })
+    
+  })
+  
+});
 
 /* =========================== WEEK ======================================= */
 // @desc    Create a new week for a routine - required fields: user, routine
@@ -91,6 +106,25 @@ exports.getAllWeeks = asyncHandler(async (req, res, next) => {
     }
 
     res.status(201).send({ success: true, data: weeks })
+    
+  })
+  
+});
+
+// @desc    Delete a week and all it's children
+// @route   DELETE /api/v1.0/routines/weeks/:weekId
+// @access  Private
+exports.deleteWeek = asyncHandler(async (req, res, next) => {
+
+  const weekToDelete = await Week.findById(req.params.weekId)
+  
+  weekToDelete
+  .deleteOne((err, week) => {
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+
+    res.status(201).send({ success: true, data: week })
     
   })
   

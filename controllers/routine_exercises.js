@@ -38,3 +38,21 @@ exports.getAllRoutineExercises = asyncHandler(async (req, res, next) => {
     res.status(201).send({ success: true, data: routineExercises })
   })
 });
+
+// @desc    Get all routine excercises
+// @route   DELTE /api/v1.0/routine-exercises/:routineExId
+// @access  Private
+exports.deleteRoutineExercises = asyncHandler(async (req, res, next) => {
+  const routineExercise = await RoutineExercise.findById(req.params.routineExId)
+
+  if(!routineExercise){
+    return res.status(400).send({ success: false, error_message: 'No routine exercise found with that id'})
+  }
+
+  routineExercise.deleteOne()
+
+  return res.status(200).json({ success: true, data: {} })
+
+});
+
+

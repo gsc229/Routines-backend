@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-
 const RoutineExercise_Schema = new mongoose.Schema({
   exercise: {
     type:  mongoose.Types.ObjectId,
@@ -31,6 +30,12 @@ const RoutineExercise_Schema = new mongoose.Schema({
     type: Number,
     min: 0,
     max: 100
+  },
+  scheduled_time: {
+    type: Date
+  },
+  completed_time: {
+    type: Date
   },
   target_reps: {
     type: Number,

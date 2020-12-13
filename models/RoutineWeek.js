@@ -13,6 +13,15 @@ const RoutineWeek_Schema = new mongoose.Schema({
   },
   week_number: {
     type: Number
+  },
+  week_of_year: {
+    type: Number
+  },
+  week_start_date: {
+    type: Date
+  },
+  year: {
+    type: Date
   }
 },
 {
@@ -24,6 +33,16 @@ const RoutineWeek_Schema = new mongoose.Schema({
   }
 })
 
+/* ================ DELETE Cascading ======================= */
+RoutineWeek_Schema.pre('deleteOne', {document:true, query: false}, async function(next){
+  console.log(`DELETE RoutineWeek cascade to RoutineExercise`)
+  await this.model('RoutineExercise').deleteMany({
+    week: this._id
+  })
+  next()
+})
+
+/* =================== Populate Virtuals ================= */
 RoutineWeek_Schema.virtual('exercises', {
   ref: "RoutineExercise",
   localField: '_id',

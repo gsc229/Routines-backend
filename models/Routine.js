@@ -52,10 +52,29 @@ const Routine_Schema = new mongoose.Schema({
   toObject: {virtuals: true}
 })
 
+/* ================ DELETE Cascading ======================= */
+Routine_Schema.pre('deleteOne', async function(next){
+  console.log(`DELETE Routine cascade RoutineWeek, RoutineExercise`)
+  await this.model('RoutineWeek').deleteMany({
+    routine: this._id
+  })
+  await this.model('RoutineExercise').deleteMany({
+    routine: this._id
+  })
+  next()
+})
 
-/* Virtuals */
+
+/* =================== Populate Virtuals ================= */
 Routine_Schema.virtual('weeks', {
   ref: 'RoutineWeek',
+  localField: '_id',
+  foreignField: 'routine',
+  justOne: false
+})
+
+Routine_Schema.virtual('exercises', {
+  ref: 'RoutineExercise',
   localField: '_id',
   foreignField: 'routine',
   justOne: false
