@@ -1,26 +1,21 @@
 const mongoose = require('mongoose')
 
+
 const RoutineExercise_Schema = new mongoose.Schema({
   exercise: {
     type:  mongoose.Types.ObjectId,
+    ref: 'Exercise',
     required: [true, "Must provide exercise, routine and user ids"]
   },
   routine: {
     type:  mongoose.Types.ObjectId,
+    ref: 'Routine',
     required: [true, "Must provide exercise, routine and user ids"]
   },
   user: {
     type:  mongoose.Types.ObjectId,
+    ref: 'User',
     required: [true, "Must provide exercise, routine and user ids"]
-  },
-  week_number: {
-    type: Number,
-    default: null
-  },
-  day_of_week: {
-    type: String,
-    enum: ["U, M, T, W, R, F, S"],
-    default: null
   },
   target_reps: {
     type: Number,

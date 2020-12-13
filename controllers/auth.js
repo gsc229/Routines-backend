@@ -8,7 +8,7 @@ const ErrorResponse = require('../utils/errorResponse')
 // @access  Public
 exports.createUser = asyncHandler(async (req, res, next) => {
   const { email, password, username } = req.body;
-
+  
   const newUser = await User.create({
     email,
     username,
@@ -19,10 +19,12 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     email
   })
 
+  if(!userSansPw){
+    return next(new ErrorResponse('There was a problem creating a new user', 500))
+  }
+
   res.status(201).send({ user: userSansPw});
 });
-
-
 
 // @desc    Login user
 // @route   POST /api/v1.0/auth/login

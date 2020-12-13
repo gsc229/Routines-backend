@@ -1,4 +1,3 @@
-const { ObjectID } = require('bson')
 const mongoose = require('mongoose')
 
 const Exercise_Schema = new mongoose.Schema({
@@ -22,11 +21,11 @@ const Exercise_Schema = new mongoose.Schema({
     minlength: [3, "Cannot be less than 3 characters"]
   },
   original_creator: {
-    type: mongoose.Types.ObjectId,  
-    required: true, 
-    ref: 'User'
+    type: mongoose.Types.ObjectId, 
+    ref: 'User',  
+    required: [true, "Needs the id of the originial creator"]
   },
-  bodyPart: {
+  body_part: {
     type: String, 
     required: [true, "Must provide a body part"], 
     maxlength: [50, "Cannot exceed 50 characters"],
@@ -49,8 +48,7 @@ const Exercise_Schema = new mongoose.Schema({
     minlength: [3, "Cannot be less than 3 characters"]
   },
   video_url: {
-    type: String,
-    minlength
+    type: String
   }
 
 })

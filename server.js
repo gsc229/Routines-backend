@@ -22,6 +22,7 @@ if(process.env.NODE_ENV==='development'){
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users')
 const exerciseRoutes = require('./routes/exercises')
+const routineRoutes = require('./routes/routines')
 const routineExercises = require('./routes/routine_exercises')
 
 // Initiate the app
@@ -40,6 +41,7 @@ app.use(cors())
 app.use('/api/v1.0/auth', authRoutes)
 app.use('/api/v1.0/users', userRoutes)
 app.use('/api/v1.0/exercises', exerciseRoutes)
+app.use('/api/v1.0/routines', routineRoutes)
 app.use('/api/v1.0/routine-exercises', routineExercises)
 
 // test route
