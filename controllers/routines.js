@@ -35,7 +35,12 @@ exports.getAllRoutines = asyncHandler(async (req, res, next) => {
   .find()
   .populate({
     path: 'weeks',
-    select: 'week_number sunday'
+    populate: {
+      path: 'exercises',
+      populate: {
+        path: 'exercise'
+      }
+    }
   })
   .exec((err, routines) => {
     if(err){
@@ -63,6 +68,30 @@ exports.createWeek = asyncHandler(async (req, res, next) => {
     } 
 
     res.status(201).send({ success: true, data: week });
+  })
+  
+});
+
+// @desc    Get all weeks from all routines - required fields: original_creator, user, name
+// @route   GET /api/v1.0/routines/weeks
+// @access  Private
+exports.getAllWeeks = asyncHandler(async (req, res, next) => {
+
+  Week
+  .find()
+  .populate({
+    path: 'exercises',
+    populate: {
+      path: 'exercise'
+    }
+  })
+  .exec((err, weeks) => {
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+
+    res.status(201).send({ success: true, data: weeks })
+    
   })
   
 });

@@ -4,8 +4,8 @@ const express = require('express')
 const {
   createRoutine,
   createWeek,
-  createDay, 
-  getAllRoutines
+  getAllRoutines,
+  getAllWeeks
 } = require('../controllers/routines')
 
 // bring in models/schemas
@@ -23,7 +23,7 @@ router
 router
   .route('/weeks')
   .post(createWeek)
-
+  .get(getAllWeeks)
 
 
 // export router
