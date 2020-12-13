@@ -57,16 +57,21 @@ exports.getAllRoutines = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.deleteRoutine = asyncHandler(async (req, res, next) => {
 
-  Routine
-  .deleteOne({_id: req.params.routineId}, (err, routine) => {
-    console.log({err, routine})
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
-    }
+  const routineToDelete = await Routine.findById(req.params.routineId)
 
-    res.status(201).send({ success: true, data: routine })
-    
-  })
+  if(!routineToDelete){
+    return res.status(400).send({success: false, error_message: "Routine with that id not found" })
+  }
+
+  routineToDelete
+    .deleteOne((err, routine)=>{
+      if(err){
+        return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+      }
+
+      res.status(201).send({ success: true, data: routineToDelete, message: "Routine was deleted!" })
+
+    })
   
 });
 
