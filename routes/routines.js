@@ -3,10 +3,14 @@ const express = require('express')
 // bring in controllers
 const {
   createRoutine,
-  createWeek,
   getAllRoutines,
-  getAllWeeks,
+  getRoutineById,
+  editRoutine,
   deleteRoutine,
+  createWeek,
+  getAllWeeks,
+  getWeekById,
+  editWeek,
   deleteWeek
 } = require('../controllers/routines')
 
@@ -17,17 +21,19 @@ const {
 // create router
 const router = express.Router()
 // routes
-/* Routine Routes */
+/* ================ Routine Routes ==================== */
 router
   .route('/')
   .post(createRoutine)
   .get(getAllRoutines)
 
 router
-  .route('/:routineId')
+  .route('/routine/:routineId')
+  .get(getRoutineById)
+  .put(editRoutine)
   .delete(deleteRoutine)
 
-/* Week Routes */
+/* ============= Week Routes ================= */
 router
   .route('/weeks')
   .post(createWeek)
@@ -35,6 +41,8 @@ router
 
 router
   .route('/weeks/:weekId')
+  .get(getWeekById)
+  .put(editWeek)
   .delete(deleteWeek)
 
 

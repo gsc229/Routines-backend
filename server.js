@@ -24,6 +24,7 @@ const userRoutes = require('./routes/users')
 const exerciseRoutes = require('./routes/exercises')
 const routineRoutes = require('./routes/routines')
 const routineExercises = require('./routes/routine_exercises')
+const queryTester = require('./routes/query_tester')
 
 // Initiate the app
 const app = express()
@@ -43,6 +44,7 @@ app.use('/api/v1.0/users', userRoutes)
 app.use('/api/v1.0/exercises', exerciseRoutes)
 app.use('/api/v1.0/routines', routineRoutes)
 app.use('/api/v1.0/routine-exercises', routineExercises)
+app.use('/api/v1.0/query-tester', queryTester)
 
 // test route
 app.get('/test', (req, res) => {

@@ -19,16 +19,19 @@ const Routine_Schema = new mongoose.Schema({
     },
     category: {
       type: String, 
-      enum: ["Endurance", "Strength", "Flexibility", "Balance"]
+      enum: ["Endurance", "Strength", "Flexibility", "Balance"],
+      default: null
     },
     difficulty: {
       type: String,
-      enum: ["Easy", "Medium", "Hard", "Extreme"]
+      enum: ["Easy", "Medium", "Hard", "Extreme"],
+      default: null
     },
     description: {
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
-      minlength: [3, "Cannot be less than 3 characters"]
+      minlength: [3, "Cannot be less than 3 characters"],
+      default: null
     },
     body_part: {
       type: String,
@@ -38,12 +41,14 @@ const Routine_Schema = new mongoose.Schema({
     muscle_group: {
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
-      minlength: [3, "Cannot be less than 3 characters"]
+      minlength: [3, "Cannot be less than 3 characters"],
+      default: null
     },
     target_muscle: {
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
-      minlength: [3, "Cannot be less than 3 characters"]
+      minlength: [3, "Cannot be less than 3 characters"],
+      default: null
     }
     
 },

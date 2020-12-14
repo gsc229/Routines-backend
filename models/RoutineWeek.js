@@ -12,16 +12,20 @@ const RoutineWeek_Schema = new mongoose.Schema({
     ref: 'User'
   },
   week_number: {
-    type: Number
+    type: Number,
+    default: null
   },
   week_of_year: {
-    type: Number
+    type: Number,
+    default: null
   },
   week_start_date: {
-    type: Date
+    type: Date,
+    default: null
   },
   year: {
-    type: Date
+    type: Date,
+    default: null
   }
 },
 {
