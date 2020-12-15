@@ -26,6 +26,10 @@ const RoutineWeek_Schema = new mongoose.Schema({
   year: {
     type: Date,
     default: null
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
   }
 },
 {

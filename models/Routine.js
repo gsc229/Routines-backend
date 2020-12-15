@@ -49,6 +49,10 @@ const Routine_Schema = new mongoose.Schema({
       maxlength: [50, "Cannot exceed 50 characters"],
       minlength: [3, "Cannot be less than 3 characters"],
       default: null
+    },
+    created_at: {
+      type: Date,
+      default: Date.now
     }
     
 },
