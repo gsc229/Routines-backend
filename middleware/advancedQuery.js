@@ -1,14 +1,15 @@
 const populateBuilder = require('../helpers/populateQuery')
 
 const advancedQuery = (model, populate) => async (req, res, next) => {
-  // check to see if the advancedQuery can be bypassed, if it can call next() 
-  // bypass condition vars
-  /* const noQuery = Object.entries(req.query).length < 1 
-  if(noQuery){
-    res.bypass = {noQuery}
-    next()
-  } */
-  //if not...
+  
+  if(Object.entries(req.params).length && !req.query._id){
+    console.log(Object.entries(req.params))
+    req.query._id = Object.entries(req.params)[0][1]
+  }
+
+  console.log("req.params\n",req.params)
+  console.log("req.query\n",req.query)
+
   const reqQuery = { ...req.query }
   // remove non-search fields
   const removeFields = ['select', 'sort', 'limit', 'page', 'populate_one', 'populate_two', 'populate_three', 'select_one', 'select_two','select_three']
@@ -85,8 +86,7 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
       pagination.total_results = results.length,
       res.advancedResults = {
         success: true,
-        message: "Here's your advance results.",
-        results,
+        data: results,
         pagination
       }
       return next()

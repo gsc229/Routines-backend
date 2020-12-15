@@ -14,9 +14,10 @@ const {
   deleteWeek
 } = require('../controllers/routines')
 
-// bring in models/schemas
+const Routine = require('../models/Routine')
 
 // bring in middlware variables
+const advancedQuery = require('../middleware/advancedQuery')
 
 // create router
 const router = express.Router()
@@ -25,11 +26,11 @@ const router = express.Router()
 router
   .route('/')
   .post(createRoutine)
-  .get(getAllRoutines)
+  .get(advancedQuery(Routine) ,getAllRoutines)
 
 router
   .route('/routine/:routineId')
-  .get(getRoutineById)
+  .get(advancedQuery(Routine), getRoutineById)
   .put(editRoutine)
   .delete(deleteRoutine)
 
@@ -37,11 +38,11 @@ router
 router
   .route('/weeks')
   .post(createWeek)
-  .get(getAllWeeks)
+  .get(advancedQuery(Routine), getAllWeeks)
 
 router
   .route('/weeks/:weekId')
-  .get(getWeekById)
+  .get(advancedQuery(Routine), getWeekById)
   .put(editWeek)
   .delete(deleteWeek)
 

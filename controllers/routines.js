@@ -27,25 +27,7 @@ exports.createRoutine = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getAllRoutines = asyncHandler(async (req, res, next) => {
 
-  Routine
-  .find()
-  .populate({
-    path: 'weeks',
-    populate: {
-      path: 'exercises',
-      populate: {
-        path: 'exercise'
-      }
-    }
-  })
-  .exec((err, routines) => {
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
-    }
-
-    res.status(201).send({ success: true, data: routines })
-    
-  })
+  res.status(200).send(res.advancedResults)
   
 });
 
@@ -54,29 +36,7 @@ exports.getAllRoutines = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getRoutineById = asyncHandler(async (req, res, next) => {
 
-  Routine
-  .findById(req.params.routineId)
-  .populate({
-    path: 'weeks',
-    populate: {
-      path: 'exercises',
-      populate: {
-        path: 'exercise'
-      }
-    }
-  })
-  .exec((err, routine) => {
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
-    }
-
-    if(routine){
-     return res.status(201).send({ success: true, data: routine })
-    }
-
-    return res.status(400).send({success: false, error_message: `No routine found with id of ${req.params.routineId}`})
-    
-  })
+  res.status(200).send(res.advancedResults)
   
 });
 
@@ -162,23 +122,7 @@ exports.createWeek = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1.0/routines/weeks
 // @access  Private
 exports.getAllWeeks = asyncHandler(async (req, res, next) => {
-  console.log("ALL WEEKS".red)
-  Week
-  .find()
-  .populate({
-    path: 'exercises',
-    populate: {
-      path: 'exercise'
-    }
-  })
-  .exec((err, weeks) => {
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name})
-    }
-
-    res.status(201).send({ success: true, data: weeks })
-    
-  })
+  res.status(200).send(res.advancedResults)
   
 });
 
@@ -187,29 +131,7 @@ exports.getAllWeeks = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getWeekById = asyncHandler(async (req, res, next) => {
 
-  Week
-  .findById(req.params.weekId)
-  .populate({
-    path: 'weeks',
-    populate: {
-      path: 'exercises',
-      populate: {
-        path: 'exercise'
-      }
-    }
-  })
-  .exec((err, week) => {
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
-    }
-
-    if(week){
-     return res.status(201).send({ success: true, data: week })
-    }
-
-    return res.status(400).send({success: false, error_message: `No week found with id of ${req.params.weekId}`})
-    
-  })
+  res.status(200).send(res.advancedResults)
   
 });
 

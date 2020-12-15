@@ -2,8 +2,6 @@ const populateQuery = (reqDotQuery) => {
   // Routine --> Week --> Routine_Exercise --> Exercise 
   // Routine
 
-  console.log({reqDotQuery})
-
   const populate = {}
   
   populate.path = reqDotQuery.populate_one ? reqDotQuery.populate_one : '' // weeks

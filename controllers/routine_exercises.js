@@ -49,23 +49,7 @@ exports.createRoutineExercise = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getAllRoutineExercises = asyncHandler(async (req, res, next) => {
 
-  RoutineExercise
-  .find()
-  .populate({
-    path: 'exercise'
-  })
-  .exec((err, routineEx) => {
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
-    }
-
-    if(routineEx){
-     return res.status(201).send({ success: true, data: routineEx })
-    }
-
-    return res.status(400).send({success: false, error_message: `No routine exercise found with id of ${req.params.routineExId}`})
-    
-  })
+  res.status(200).send(res.advancedResults)
   
 });
 
@@ -73,24 +57,7 @@ exports.getAllRoutineExercises = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1.0/routine-exercises/:routineExId
 // @access  Private
 exports.getRoutineExById = asyncHandler(async (req, res, next) => {
-  console.log(req.params)
-  RoutineExercise
-  .findById(req.params.routineExId)
-  .populate({
-    path: 'exercise'
-  })
-  .exec((err, routineEx) => {
-    if(err){
-      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
-    }
-
-    if(routineEx){
-     return res.status(201).send({ success: true, data: routineEx })
-    }
-
-    return res.status(400).send({success: false, error_message: `No routine exercise found with id of ${req.params.routineExId}`})
-    
-  })
+  res.status(200).send(res.advancedResults)
   
 });
 
@@ -121,7 +88,7 @@ exports.editRoutineEx = asyncHandler(async (req, res, next) => {
 
 });
 
-// @desc    Get all routine excercises
+// @desc    Delete a routine excercises
 // @route   DELTE /api/v1.0/routine-exercises/:routineExId
 // @access  Private
 exports.deleteRoutineExercises = asyncHandler(async (req, res, next) => {
