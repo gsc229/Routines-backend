@@ -19,16 +19,19 @@ const Routine_Schema = new mongoose.Schema({
     },
     category: {
       type: String, 
-      enum: ["Endurance", "Strength", "Flexibility", "Balance"]
+      enum: ["Endurance", "Strength", "Flexibility", "Balance"],
+      default: null
     },
     difficulty: {
       type: String,
-      enum: ["Easy", "Medium", "Hard", "Extreme"]
+      enum: ["Easy", "Medium", "Hard", "Extreme"],
+      default: null
     },
     description: {
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
-      minlength: [3, "Cannot be less than 3 characters"]
+      minlength: [3, "Cannot be less than 3 characters"],
+      default: null
     },
     body_part: {
       type: String,
@@ -38,12 +41,18 @@ const Routine_Schema = new mongoose.Schema({
     muscle_group: {
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
-      minlength: [3, "Cannot be less than 3 characters"]
+      minlength: [3, "Cannot be less than 3 characters"],
+      default: null
     },
     target_muscle: {
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
-      minlength: [3, "Cannot be less than 3 characters"]
+      minlength: [3, "Cannot be less than 3 characters"],
+      default: null
+    },
+    created_at: {
+      type: Date,
+      default: Date.now
     }
     
 },
@@ -52,10 +61,32 @@ const Routine_Schema = new mongoose.Schema({
   toObject: {virtuals: true}
 })
 
+/* ================ DELETE Cascading ======================= */
+Routine_Schema.pre('deleteOne', {document:true, query: false}, async function(next){
+  console.log(`DELETE Routine cascade RoutineWeek, RoutineExercise`)
+  console.log({this: this, thisDotId: this._id})
 
-/* Virtuals */
+  await this.model('RoutineWeek').deleteMany({
+    routine: this._id
+  })
+  await this.model('RoutineExercise').deleteMany({
+    routine: this._id
+  })
+  
+  next()
+})
+
+
+/* =================== Populate Virtuals ================= */
 Routine_Schema.virtual('weeks', {
   ref: 'RoutineWeek',
+  localField: '_id',
+  foreignField: 'routine',
+  justOne: false
+})
+
+Routine_Schema.virtual('exercises', {
+  ref: 'RoutineExercise',
   localField: '_id',
   foreignField: 'routine',
   justOne: false

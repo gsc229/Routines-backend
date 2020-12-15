@@ -15,6 +15,12 @@ const Exercise_Schema = new mongoose.Schema({
     type: String,
     enum: ["Easy", "Medium", "Hard", "Extreme"]
   },
+  difficulty_scale: {
+    type: Number,
+    min: [1, "Must be a number between 1 and 10" ],
+    max: [10, "Must be a number between 1 and 10" ],
+    default: 1
+  },
   description: {
     type: String,
     maxlength: [50, "Cannot exceed 50 characters"],
@@ -49,6 +55,10 @@ const Exercise_Schema = new mongoose.Schema({
   },
   video_url: {
     type: String
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
   }
 
 })

@@ -3,27 +3,48 @@ const express = require('express')
 // bring in controllers
 const {
   createRoutine,
-  createWeek,
   getAllRoutines,
-  getAllWeeks
+  getRoutineById,
+  editRoutine,
+  deleteRoutine,
+  createWeek,
+  getAllWeeks,
+  getWeekById,
+  editWeek,
+  deleteWeek
 } = require('../controllers/routines')
 
-// bring in models/schemas
+const Routine = require('../models/Routine')
 
 // bring in middlware variables
+const advancedQuery = require('../middleware/advancedQuery')
 
 // create router
 const router = express.Router()
 // routes
+/* ================ Routine Routes ==================== */
 router
   .route('/')
   .post(createRoutine)
-  .get(getAllRoutines)
+  .get(advancedQuery(Routine) ,getAllRoutines)
 
+router
+  .route('/routine/:routineId')
+  .get(advancedQuery(Routine), getRoutineById)
+  .put(editRoutine)
+  .delete(deleteRoutine)
+
+/* ============= Week Routes ================= */
 router
   .route('/weeks')
   .post(createWeek)
-  .get(getAllWeeks)
+  .get(advancedQuery(Routine), getAllWeeks)
+
+router
+  .route('/weeks/:weekId')
+  .get(advancedQuery(Routine), getWeekById)
+  .put(editWeek)
+  .delete(deleteWeek)
 
 
 // export router

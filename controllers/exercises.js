@@ -3,21 +3,6 @@ const User = require("../models/User");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/asyncHandler");
 
-/* 
-Exercise Properies:
-    name,
-    category,
-    difficulty,
-    description,
-    original_creator, // required
-    bodyPart,
-    muscle_group,
-    target_muscle,
-    equipment,
-    video_url 
-
-*/
-
 // @desc    Create a new exercise
 // @route   POST /api/v1.0/exercises
 // @access  Private
@@ -47,13 +32,57 @@ exports.createExercise = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getAllExercises = asyncHandler(async (req, res, next) => {
 
-  Exercise.find().exec((err, exercises) => {
+  res.status(200).send(res.advancedResults)
+  
+});
+
+// @desc    Get exercise by ID
+// @route   GET /api/v1.0/exercises/:exerciseId
+// @access  Private
+exports.getExerciseById = asyncHandler(async (req, res, next) => {
+  res.status(200).send(res.advancedResults)
+});
+
+// @desc    Edit exercise
+// @route   PUT /api/v1.0/exercises/:exerciseId
+// @access  Private
+exports.editExercise = asyncHandler(async (req, res, next) => {
+
+  await Exercise
+  .findByIdAndUpdate(
+    req.params.exerciseId , // id
+    req.body, // changes
+    {new: true, runValidators: true}, // options
+
+    (err, exercise) => { // callback
+
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
 
-    res.status(201).send({ success: true, data: exercises })
-    
+    if(exercise){
+      return res.status(201).send({ success: true, data: exercise })
+    }
+
+    return res.status(400).send({success: false, error_message: `No exercise found with id of ${req.params.exerciseId}`})
+
   })
-  
+
+});
+
+
+// @desc    Delete an excercise
+// @route   DELTE /api/v1.0/exercises/:exerciseId
+// @access  Private
+exports.deleteExercises = asyncHandler(async (req, res, next) => {
+  const exercise = await Exercise.findById(req.params.exerciseId)
+
+  if(!exercise){
+    return res.status(400).send({ success: false, error_message: 'No exercise found with that id'})
+  }
+
+  exercise.deleteOne()
+
+  return res.status(200).json({ success: true, data: {} })
+
 });
