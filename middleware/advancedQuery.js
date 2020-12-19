@@ -9,6 +9,7 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
 
   console.log("req.params\n",req.params)
   console.log("req.query\n",req.query)
+  console.log("req.headers", req.headers)
 
   const reqQuery = { ...req.query }
   // remove non-search fields

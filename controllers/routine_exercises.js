@@ -84,7 +84,7 @@ exports.editRoutineEx = asyncHandler(async (req, res, next) => {
 
     return res.status(400).send({success: false, error_message: `No routine exercise found with id of ${req.params.routineExId}`})
 
-  })
+  }).populate('exercise')
 
 });
 
