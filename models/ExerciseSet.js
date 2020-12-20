@@ -1,25 +1,30 @@
 const mongoose = require('mongoose')
 
-const RoutineExercise_Schema = new mongoose.Schema({
+const ExerciseSet_Schema = new mongoose.Schema({
   exercise: {
     type:  mongoose.Types.ObjectId,
     ref: 'Exercise',
-    required: [true, "Must provide exercise, routine, week and user ids"]
+    required: [true, "Must provide exercise, routine, week, set group and user ids"]
   },
   routine: {
     type:  mongoose.Types.ObjectId,
     ref: 'Routine',
-    required: [true, "Must provide exercise, routine, week and user ids"]
+    required: [true, "Must provide exercise, routine, week, set group and user ids"]
   },
   week: {
     type:  mongoose.Types.ObjectId,
     ref: 'RoutineWeek',
-    required: [true, "Must provide exercise, routine, week and user ids"]
+    required: [true, "Must provide exercise, routine, week, set group and user ids"]
+  },
+  set_group: {
+    type: mongoose.Types.ObjectId,
+    ref: 'SetGroup',
+    required: [true, "Must provide exercise, routine, week, set group and user ids"]
   },
   user: {
     type:  mongoose.Types.ObjectId,
     ref: 'User',
-    required: [true, "Must provide exercise, routine, week and user ids"]
+    required: [true, "Must provide exercise, routine, week, set group and user ids"]
   },
   day: {
     type: String,
@@ -118,4 +123,4 @@ const RoutineExercise_Schema = new mongoose.Schema({
 })
 
 
-module.exports = mongoose.model('RoutineExercise', RoutineExercise_Schema)
+module.exports = mongoose.model('ExerciseSet', ExerciseSet_Schema)

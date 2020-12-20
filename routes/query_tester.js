@@ -6,11 +6,11 @@ const {queryExercise, queryRoutines, queryRoutineEx} = require('../controllers/q
 // bring in models/schemas
 const Exercise = require('../models/Exercise')
 const Routine = require('../models/Routine')
-const RoutineEx = require('../models/RoutineExercise')
+const RoutineEx = require('../models/ExerciseSet')
 
 // bring in middlware variables
 const advancedQuery = require('../middleware/advancedQuery')
-const RoutineExercise = require('../models/RoutineExercise')
+const ExerciseSet = require('../models/ExerciseSet')
 
 // create router
 const router = express.Router()
@@ -25,7 +25,7 @@ router
 
 router
   .route('/routine-exercises')
-  .get(advancedQuery(RoutineExercise), queryRoutineEx)
+  .get(advancedQuery(ExerciseSet), queryRoutineEx)
 
 
 

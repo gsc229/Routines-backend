@@ -22,7 +22,7 @@ const RoutineDay_Schema = new mongoose.Schema({
     required: [true, "Needs the id of the user"], 
     ref: 'User'
   },
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   created_at: {
     type: Date,
     default: Date.now
