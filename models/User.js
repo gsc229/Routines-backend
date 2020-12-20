@@ -26,7 +26,8 @@ const User_Schema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["Male", "Female"]
+    enum: ["Male", "Female"],
+    default: null
   },
   age: {
     type: Number,
@@ -38,10 +39,12 @@ const User_Schema = new mongoose.Schema({
   },
   measurement_system: {
     type: String,
-    enum: ["Imperial", "Metric"]
+    enum: ["Imperial", "Metric"],
+    default: "Metric"
   },
   phone: {
-    type: String
+    type: String,
+    default: null
   },
   token: {
     type: String

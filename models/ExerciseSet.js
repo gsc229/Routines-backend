@@ -29,24 +29,40 @@ const ExerciseSet_Schema = new mongoose.Schema({
   day: {
     type: String,
     enum: ["U", "M", "T", "W", "R", "F", "S"],
-    required: [true, "Must specify a day of week for a routine exercise - U, M, T, W, R, F, S"]
+    required: [true, "Must specify a day of week for a set group - U, M, T, W, R, F, S"]
   },
   order: {
     type: Number,
     min: 0,
     max: 100
   },
-  scheduled_time: {
-    type: Date
-  },
-  completed_time: {
-    type: Date
-  },
-  target_reps: {
-    type: Number,
+  set_type: {
+    type: String,
+    enum: [
+    "Straight",
+    "Super",
+    "Super - Antagonist", 
+    "Super - Compound", 
+    "Super - Tri", 
+    "Super - Giant", 
+    "Circuit", 
+    "Pyramid",
+    "Drop",
+    "Stripping",
+    "Rest - Pause",
+    "Pre-Exhaustion"
+    ],
     default: null
   },
-  target_sets: {
+  scheduled_time: {
+    type: Date,
+    default: null
+  },
+  completed_time: {
+    type: Date,
+    default: null
+  },
+  target_reps: {
     type: Number,
     default: null
   },
@@ -57,23 +73,27 @@ const ExerciseSet_Schema = new mongoose.Schema({
   rest_time: {
     interval: {
       type: String,
-      enum: ['m', 's', 'h']
+      enum: ['m', 's', 'h'],
+      default: null
     },
     duration: {
       type: Number,
       min: 0,
-      max: 60
+      max: 60,
+      default: null
     }
   },
   target_time: {
     interval: {
       type: String,
-      enum: ['m', 's', 'h']
+      enum: ['m', 's', 'h'],
+      default: null
     },
     duration: {
       type: Number,
       min: 0,
-      max: 60
+      max: 60,
+      default: null
     }
   },
   target_distance_km: {
@@ -88,10 +108,6 @@ const ExerciseSet_Schema = new mongoose.Schema({
     type: Number,
     default: null
   },
-  actual_sets: {
-    type: Number,
-    default: null
-  },
   actual_weight_kg: {
     type: Number,
     default: null
@@ -99,12 +115,14 @@ const ExerciseSet_Schema = new mongoose.Schema({
   actual_time: {
     interval: {
       type: String,
-      enum: ['m', 's', 'h']
+      enum: ['m', 's', 'h'],
+      default: null
     },
     duration: {
       type: Number,
       min: 0,
-      max: 60
+      max: 60,
+      default: null
     }
   },
   actual_distance_km: {

@@ -77,6 +77,9 @@ Routine_Schema.pre('deleteOne', {document:true, query: false}, async function(ne
   await this.model('RoutineWeek').deleteMany({
     routine: this._id
   })
+  await this.model('SetGroup').deleteMany({
+    routine: this._id
+  })
   await this.model('ExerciseSet').deleteMany({
     routine: this._id
   })

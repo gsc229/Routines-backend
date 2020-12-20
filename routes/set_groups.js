@@ -3,7 +3,11 @@ const express = require('express')
 
 // bring in controllers
 const {
-  
+  createSetGroup,
+  getAllSetGroups,
+  getSetGroupById,
+  editSetGroup,
+  deleteSetGroup,
   createExerciseSet, 
   getAllExerciseSets, 
   deleteExerciseSets,
@@ -11,6 +15,7 @@ const {
   editExerciseSet
 } = require('../controllers/set_groups')
 // bring in models/schemas
+const SetGroup = require('../models/SetGroup')
 const ExerciseSet = require('../models/ExerciseSet')
 
 // bring in middlware variables
@@ -22,6 +27,17 @@ const router = express.Router()
 // routes
 router
   .route('/')
+  .post(createSetGroup)
+  .get(advancedQuery(SetGroup), getAllSetGroups)
+  
+router
+  .route('/:setGroupId')
+  .get(advancedQuery(SetGroup), getSetGroupById)
+  .put(editSetGroup)
+  .delete(deleteSetGroup)
+
+router
+  .route('/exercise-sets')
   .post(createExerciseSet)
   .get(advancedQuery(ExerciseSet) , getAllExerciseSets)
 

@@ -43,7 +43,11 @@ const RoutineWeek_Schema = new mongoose.Schema({
 
 /* ================ DELETE Cascading ======================= */
 RoutineWeek_Schema.pre('deleteOne', {document:true, query: false}, async function(next){
-  console.log(`DELETE RoutineWeek cascade to ExerciseSet`)
+  console.log(`DELETE RoutineWeek cascade to SetGroup, ExerciseSet`)
+
+  await this.model('SetGroup').deleteMany({
+    routine: this._id
+  })
   
   await this.model('ExerciseSet').deleteMany({
     week: this._id
@@ -52,7 +56,15 @@ RoutineWeek_Schema.pre('deleteOne', {document:true, query: false}, async functio
 })
 
 /* =================== Populate Virtuals ================= */
-RoutineWeek_Schema.virtual('exercises', {
+
+RoutineWeek_Schema.virtual('set_groups', {
+  ref: "SetGroup",
+  localField: '_id',
+  foreignField: 'week',
+  justOne: false
+})
+
+RoutineWeek_Schema.virtual('exercise_sets', {
   ref: "ExerciseSet",
   localField: '_id',
   foreignField: 'week',
