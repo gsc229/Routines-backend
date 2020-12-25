@@ -9,9 +9,11 @@ const asyncHandler = require("../middleware/asyncHandler");
 // @route   POST /api/v1.0/routines
 // @access  Private
 exports.createRoutine = asyncHandler(async (req, res, next) => {
-
+  
+  console.log('createRoutine'.america)
+  console.log("req.body: ",req.body)
   const routine = new Routine(req.body)
-
+  console.log({routine})
   routine.save((err, routine) => {
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
@@ -52,12 +54,13 @@ exports.editRoutine = asyncHandler(async (req, res, next) => {
     {new: true, runValidators: true}, // options
 
     (err, routine) => { // callback
-
+    console.log({err, routine})
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
 
     if(routine){
+      console.log({routine, reqBody: req.body})
       return res.status(201).send({ success: true, data: routine })
     }
 

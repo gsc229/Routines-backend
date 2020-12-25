@@ -16,15 +16,15 @@ exports.createExercise = asyncHandler(async (req, res, next) => {
     });
   }
 
-  const exercise = await Exercise.create(req.body);
+  const exercise = await new Exercise(req.body);
 
-  if (!exercise) {
-    return next(
-      new ErrorResponse("There was a problem creating the exercise", 500)
-    );
-  }
+  exercise.save((err, newExercise) => {
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    } 
 
-  res.status(201).send({ success: true, data: exercise });
+    res.status(201).send({ success: true, data: newExercise });
+  })
 });
 
 // @desc    Get all excercises

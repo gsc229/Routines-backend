@@ -1,6 +1,6 @@
 const fromSchema_RoutineWeek = 
 {sunday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],
@@ -8,7 +8,7 @@ const fromSchema_RoutineWeek =
   }
 },
 monday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],
@@ -16,7 +16,7 @@ monday: {
   }
 },
 tuesday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],
@@ -24,7 +24,7 @@ tuesday: {
   }
 },
 wednesday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],
@@ -32,7 +32,7 @@ wednesday: {
   }
 },
 thursday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],
@@ -40,7 +40,7 @@ thursday: {
   }
 },
 friday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],
@@ -48,7 +48,7 @@ friday: {
   }
 },
 saturday: {
-  exercises: [{type: mongoose.Types.ObjectId, ref: "RoutineExercise"}],
+  exercises: [{type: mongoose.Types.ObjectId, ref: "ExerciseSet"}],
   notes: {
     type: String,
     maxlength: [500, "Cannot exceed 50 characters"],

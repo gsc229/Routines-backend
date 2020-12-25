@@ -23,7 +23,8 @@ const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users')
 const exerciseRoutes = require('./routes/exercises')
 const routineRoutes = require('./routes/routines')
-const routineExercises = require('./routes/routine_exercises')
+const setGroups = require('./routes/set_groups')
+const exerciseSets = require('./routes/exercise_sets')
 const queryTester = require('./routes/query_tester')
 
 // Initiate the app
@@ -43,7 +44,8 @@ app.use('/api/v1.0/auth', authRoutes)
 app.use('/api/v1.0/users', userRoutes)
 app.use('/api/v1.0/exercises', exerciseRoutes)
 app.use('/api/v1.0/routines', routineRoutes)
-app.use('/api/v1.0/routine-exercises', routineExercises)
+app.use('/api/v1.0/set-groups', setGroups)
+app.use('/api/v1.0/exercise-sets', exerciseSets)
 app.use('/api/v1.0/query-tester', queryTester)
 
 // test route
