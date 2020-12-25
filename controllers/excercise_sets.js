@@ -13,7 +13,6 @@ const asyncHandler = require("../middleware/asyncHandler")
 // @route   POST /api/v1.0/exercise-set
 // @access  Private
 exports.createExerciseSet = asyncHandler(async (req, res, next) => {
-
   const {exercise, routine, week, day, user, set_group} = req.body
 
   if(!exercise || !routine || !week || !day || !set_group || !user){
@@ -61,8 +60,7 @@ exports.createExerciseSet = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1.0/set-groups/exercises-sets
 // @access  Private
 exports.getAllExerciseSets = asyncHandler(async (req, res, next) => {
-
-  res.status(200).send(res.advancedResults)
+  return res.status(200).send(res.advancedResults)
   
 });
 
@@ -70,15 +68,15 @@ exports.getAllExerciseSets = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1.0/set-groups/exercises-sets/:exerciseSetId
 // @access  Private
 exports.getExerciseSetById = asyncHandler(async (req, res, next) => {
-  res.status(200).send(res.advancedResults)
+  return res.status(200).send(res.advancedResults)
   
 });
 
 // @desc    Edit a exercise set by ID
-// @route   PUT /api/v1.0/set-groups/exercise-sets/:exerciseSetId
+// @route   PUT /api/v1.0/exercise-sets/:exerciseSetId
 // @access  Private
 exports.editExerciseSet = asyncHandler(async (req, res, next) => {
-  console.log("editExerciseSet req.query: ".america, req.query)
+  console.log("editExerciseSet".bgMagenta)
   await ExerciseSet
   .findByIdAndUpdate(
     req.params.exerciseSetId , // id
@@ -86,7 +84,6 @@ exports.editExerciseSet = asyncHandler(async (req, res, next) => {
     {new: true, runValidators: true}, // options
 
     (err, routineEx) => { // callback
-
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }

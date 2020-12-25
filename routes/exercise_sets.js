@@ -3,13 +3,12 @@ const express = require('express')
 
 // bring in controllers
 const {
-  
   createExerciseSet, 
   getAllExerciseSets, 
   deleteExerciseSets,
   getExerciseSetById,
   editExerciseSet
-} = require('../controllers/set_groups')
+} = require('../controllers/excercise_sets')
 // bring in models/schemas
 const ExerciseSet = require('../models/ExerciseSet')
 
@@ -18,7 +17,6 @@ const advancedQuery = require('../middleware/advancedQuery')
 
 // create router
 const router = express.Router()
-
 // routes
 router
   .route('/')

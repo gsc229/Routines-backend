@@ -4,16 +4,15 @@ const Exercise_Schema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Must provide a name for the exercise"],
-    maxlength: [50, "Cannot exceed 50 characters"],
-    minlength: [3, "Cannot be less than 3 characters"]
+    maxlength: [50, "Cannot exceed 50 characters"],  
   },
   category: {
     type: String, 
-    enum: ["Endurance", "Strength", "Flexibility", "Balance"]
+    enum: [ "Endurance", "Strength", "Flexibility", "Balance", null, ""]
   },
   difficulty: {
     type: String,
-    enum: ["Easy", "Medium", "Hard", "Extreme"]
+    enum: [ "Easy", "Medium", "Hard", "Extreme", null, ""]
   },
   difficulty_scale: {
     type: Number,
@@ -23,8 +22,7 @@ const Exercise_Schema = new mongoose.Schema({
   },
   description: {
     type: String,
-    maxlength: [50, "Cannot exceed 50 characters"],
-    minlength: [3, "Cannot be less than 3 characters"]
+    maxlength: [500, "Cannot exceed 50 characters"]
   },
   original_creator: {
     type: mongoose.Types.ObjectId, 
@@ -32,26 +30,22 @@ const Exercise_Schema = new mongoose.Schema({
     required: [true, "Needs the id of the originial creator"]
   },
   body_part: {
-    type: String, 
-    required: [true, "Must provide a body part"], 
-    maxlength: [50, "Cannot exceed 50 characters"],
-    minlength: [3, "Cannot be less than 3 characters"]
+    type: String,
+    maxlength: [50, "Cannot exceed 50 characters"]
   },
   muscle_group: {
     type: String,
-    maxlength: [50, "Cannot exceed 50 characters"],
-    minlength: [3, "Cannot be less than 3 characters"]
+    enum: ["Chest", "Back", "Arms", "Shoulders", "Legs", "Calves", "Full Body", "Multiple Major Muscle Groups", "",null],
+    default: null
   },
   target_muscle: {
     type: String,
-    maxlength: [50, "Cannot exceed 50 characters"],
-    minlength: [3, "Cannot be less than 3 characters"]
+    maxlength: [50, "Cannot exceed 50 characters"],  
   },
   equipment: {
     type: String,
     default: 'none',
     maxlength: [50, "Cannot exceed 50 characters"],
-    minlength: [3, "Cannot be less than 3 characters"]
   },
   video_url: {
     type: String

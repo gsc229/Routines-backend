@@ -17,9 +17,12 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
   const removeFields = ['select', 'sort', 'limit', 'page', 'populate_one', 'populate_two', 'populate_three', 'select_one', 'select_two','select_three']
   removeFields.forEach(param => delete reqQuery[param])
 
+  console.log(Object.keys(reqQuery))
+
   let queryStr = JSON.stringify(reqQuery)
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
-
+  
+  console.log({queryStr})
   let query = model.find(JSON.parse(queryStr))
   /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
   if(req.query.select){
@@ -27,12 +30,12 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
     query = query.select(fields)
   }
 
-  const populate = populateBuilder(req.query)
+  let populate = populateBuilder(req.query)
 
   if(populate) query = query.populate(populate)
-
+  
   console.log("advancedQuery.js ",{populate})
-
+  populate = ""
   if(req.query.sort){
     let sortBy = req.query.sort
     query = query.sort(sortBy)
@@ -88,8 +91,9 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
       pagination.total_results = results.length,
       res.advancedResults = {
         success: true,
-        data: results,
-        pagination
+        pagination,
+        data: results
+        
       }
       return next()
     }

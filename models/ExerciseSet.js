@@ -28,8 +28,8 @@ const ExerciseSet_Schema = new mongoose.Schema({
   },
   day: {
     type: String,
-    enum: ["U", "M", "T", "W", "R", "F", "S"],
-    required: [true, "Must specify a day of week for a set group - U, M, T, W, R, F, S"]
+    enum: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    required: [true, "Must specify a day of week for a set group - Su, Mo, Tu, We, Th, Fr, Sa"]
   },
   order: {
     type: Number,
@@ -50,8 +50,21 @@ const ExerciseSet_Schema = new mongoose.Schema({
     "Drop",
     "Stripping",
     "Rest - Pause",
-    "Pre-Exhaustion"
+    "Pre-Exhaustion",
+    null,
+    ""
     ],
+    default: null
+  },
+  difficulty: {
+    type: String,
+    enum: ["Easy", "Medium", "Hard", "Extreme", "", null],
+    default: null
+  },
+  difficulty_scale: {
+    type: Number,
+    min: 1,
+    max: 10,
     default: null
   },
   scheduled_time: {
@@ -73,7 +86,7 @@ const ExerciseSet_Schema = new mongoose.Schema({
   rest_time: {
     interval: {
       type: String,
-      enum: ['m', 's', 'h'],
+      enum: ['m', 's', 'h',"", null],
       default: null
     },
     duration: {
@@ -86,7 +99,7 @@ const ExerciseSet_Schema = new mongoose.Schema({
   target_time: {
     interval: {
       type: String,
-      enum: ['m', 's', 'h'],
+      enum: ['m', 's', 'h', "", null],
       default: null
     },
     duration: {
@@ -115,7 +128,7 @@ const ExerciseSet_Schema = new mongoose.Schema({
   actual_time: {
     interval: {
       type: String,
-      enum: ['m', 's', 'h'],
+      enum: ['m', 's', 'h', "", null],
       default: null
     },
     duration: {

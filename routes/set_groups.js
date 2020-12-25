@@ -7,16 +7,10 @@ const {
   getAllSetGroups,
   getSetGroupById,
   editSetGroup,
-  deleteSetGroup,
-  createExerciseSet, 
-  getAllExerciseSets, 
-  deleteExerciseSets,
-  getExerciseSetById,
-  editExerciseSet
+  deleteSetGroup
 } = require('../controllers/set_groups')
 // bring in models/schemas
 const SetGroup = require('../models/SetGroup')
-const ExerciseSet = require('../models/ExerciseSet')
 
 // bring in middlware variables
 const advancedQuery = require('../middleware/advancedQuery')
@@ -35,17 +29,6 @@ router
   .get(advancedQuery(SetGroup), getSetGroupById)
   .put(editSetGroup)
   .delete(deleteSetGroup)
-
-router
-  .route('/exercise-sets')
-  .post(createExerciseSet)
-  .get(advancedQuery(ExerciseSet) , getAllExerciseSets)
-
-router
-  .route('/:exerciseSetId')
-  .get(advancedQuery(ExerciseSet) ,getExerciseSetById)
-  .put(editExerciseSet)
-  .delete(deleteExerciseSets)
 
 
 
