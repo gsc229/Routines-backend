@@ -14,6 +14,10 @@ const Exercise_Schema = new mongoose.Schema({
     type: String,
     enum: [ "Easy", "Medium", "Hard", "Extreme", null, ""]
   },
+  measures: {
+    type: [String],
+    enum: ["weight", "reps", "distance", "time", "laps", null, ""]
+  },
   difficulty_scale: {
     type: Number,
     min: [1, "Must be a number between 1 and 10" ],
@@ -31,6 +35,7 @@ const Exercise_Schema = new mongoose.Schema({
   },
   body_part: {
     type: String,
+    trim: true,
     maxlength: [50, "Cannot exceed 50 characters"]
   },
   muscle_group: {
@@ -40,15 +45,18 @@ const Exercise_Schema = new mongoose.Schema({
   },
   target_muscle: {
     type: String,
+    trim: true,
     maxlength: [50, "Cannot exceed 50 characters"],  
   },
   equipment: {
     type: String,
+    trim: true,
     default: 'none',
     maxlength: [50, "Cannot exceed 50 characters"],
   },
   video_url: {
-    type: String
+    type: String,
+    trim: true,
   },
   created_at: {
     type: Date,

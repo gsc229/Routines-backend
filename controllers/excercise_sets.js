@@ -15,10 +15,7 @@ const asyncHandler = require("../middleware/asyncHandler")
 exports.createExerciseSet = asyncHandler(async (req, res, next) => {
   const {exercise, routine, week, day, user, set_group} = req.body
 
-  if(!exercise || !routine || !week || !day || !set_group || !user){
-    return res.status(400).send({success: false, error_message: `Must provide exercise id, routine id, week id, user id and day (UMTWRFS)`})
-  }
-
+  
   // Check if exercise, routine and week exists
   const foundExercise = await Exercise.findById(exercise)
 
