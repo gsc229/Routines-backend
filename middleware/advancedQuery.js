@@ -7,34 +7,75 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
     console.log(Object.entries(req.params))
     req.query._id = Object.entries(req.params)[0][1]
   }
-
-  console.log("req.params\n",req.params)
-  console.log("req.query\n",req.query)
-  console.log("req.headers", req.headers)
-
+  console.log({"req.query": req.query})
   const reqQuery = { ...req.query }
   // remove non-search fields
-  const removeFields = ['select', 'sort', 'limit', 'page', 'populate_one', 'populate_two', 'populate_three', 'select_one', 'select_two','select_three']
-  removeFields.forEach(param => delete reqQuery[param])
+  const removeFields = [
+    'select', 
+    'sort', 
+    'limit', 
+    'page', 
+    'populate_one', 
+    'populate_two', 
+    'populate_three', 
+    'populate_four', 
+    'select_one', 
+    'select_two',
+    'select_three',
+    'populate_weeks',
+    'populate_set_groups',
+    'populate_exercise_sets',
+    'populate_exercises',
+    'populate_exercise_sets_exercise'
+  ]
 
-  console.log(Object.keys(reqQuery))
+  removeFields.forEach(param => delete reqQuery[param])
 
   let queryStr = JSON.stringify(reqQuery)
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   
-  console.log({queryStr})
+  console.log('BEFORE: ', {queryStr})
   let query = model.find(JSON.parse(queryStr))
   /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+
+
   if(req.query.select){
     let fields = req.query.select.split(',').join(' ')
     query = query.select(fields)
   }
 
+  // nested populate
   let populate = populateBuilder(req.query)
 
   if(populate) query = query.populate(populate)
-  
-  console.log("advancedQuery.js ",{populate})
+
+  // first level populate
+  if(req.query.populate_weeks){
+    query = query.populate('weeks')
+  }
+
+  if(req.query.populate_set_groups){
+    query = query.populate('set_groups')
+  }
+
+  if(req.query.populate_exercise_sets){
+    query = query.populate('exercise_sets')
+  }
+
+  if(req.query.populate_exercise_sets_exercise){
+    query = query.populate({
+      path: 'exercise_sets',
+      populate: {
+        path: 'exercise'
+      }
+    })
+  }
+
+  if(req.query.populate_exercises){
+    query = query.populate('exercises')
+  }
+
+
   populate = ""
   if(req.query.sort){
     let sortBy = req.query.sort

@@ -15,11 +15,13 @@ const User_Schema = new mongoose.Schema({
   },
   username: {
     type: String,
+    trim: true,
     required: [true, 'Please add a username'],
     unique: true
   },
   password: {
     type: String,
+    trim: true,
     required: [true, 'Please add a password'],
     minlength: 6,
     select: false
@@ -40,7 +42,7 @@ const User_Schema = new mongoose.Schema({
   measurement_system: {
     type: String,
     enum: ["Imperial", "Metric"],
-    default: "Metric"
+    default: "Imperial"
   },
   phone: {
     type: String,
@@ -52,6 +54,14 @@ const User_Schema = new mongoose.Schema({
   created_at: {
     type: Date,
     default: Date.now
+  }
+},
+{
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
   }
 })
 
@@ -103,5 +113,12 @@ User_Schema.methods.getResetPasswordToken = function() {
 
   return resetToken;
 };
+
+User_Schema.virtual('exercises', {
+  ref: 'Excercise',
+  localField: '_id',
+  foreignField: 'user',
+  justOne: false
+})
 
 module.exports = mongoose.model('User', User_Schema)

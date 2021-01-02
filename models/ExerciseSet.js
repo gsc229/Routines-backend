@@ -1,60 +1,50 @@
 const mongoose = require('mongoose')
+const User = require('../models/User')
+const Exercise = require('../models/Exercise')
 
 const ExerciseSet_Schema = new mongoose.Schema({
   exercise: {
     type:  mongoose.Types.ObjectId,
     ref: 'Exercise',
-    required: [true, "Must provide exercise, routine, week, set group and user ids"]
+    required: [true, "Must provide exercise id"]
   },
   routine: {
     type:  mongoose.Types.ObjectId,
     ref: 'Routine',
-    required: [true, "Must provide exercise, routine, week, set group and user ids"]
+    required: [true, "Must provide exercise, routine id"]
   },
   week: {
     type:  mongoose.Types.ObjectId,
     ref: 'RoutineWeek',
-    required: [true, "Must provide exercise, routine, week, set group and user ids"]
+    required: [true, "Must provide week id"]
   },
   set_group: {
     type: mongoose.Types.ObjectId,
     ref: 'SetGroup',
-    required: [true, "Must provide exercise, routine, week, set group and user ids"]
+    required: [true, "Must provide set group id"]
   },
   user: {
     type:  mongoose.Types.ObjectId,
     ref: 'User',
-    required: [true, "Must provide exercise, routine, week, set group and user ids"]
+    required: [true, "Must provide user id"]
+  },
+  exercise_name: {
+    type: String,
+    trim: true    
   },
   day: {
-    type: String,
-    enum: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-    required: [true, "Must specify a day of week for a set group - Su, Mo, Tu, We, Th, Fr, Sa"]
+    type: String, 
+    enum: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+  },
+  day_number:{
+    type: Number,
+    min: 1,
+    max: 7
   },
   order: {
     type: Number,
     min: 0,
     max: 100
-  },
-  set_type: {
-    type: String,
-    enum: [
-    "Straight",
-    "Super",
-    "Super - Antagonist", 
-    "Super - Compound", 
-    "Super - Tri", 
-    "Super - Giant", 
-    "Circuit", 
-    "Pyramid",
-    "Drop",
-    "Stripping",
-    "Rest - Pause",
-    "Pre-Exhaustion",
-    null,
-    ""
-    ],
-    default: null
   },
   difficulty: {
     type: String,
@@ -66,6 +56,11 @@ const ExerciseSet_Schema = new mongoose.Schema({
     min: 1,
     max: 10,
     default: null
+  },
+  unit_of_measurement: {
+    type: String,
+    enum: ["Imperial", "Metric"],
+    default: "Metric"
   },
   scheduled_time: {
     type: Date,
@@ -79,37 +74,19 @@ const ExerciseSet_Schema = new mongoose.Schema({
     type: Number,
     default: null
   },
-  target_weight_kg: {
+  target_weight: {
     type: Number,
     default: null
   },
   rest_time: {
-    interval: {
-      type: String,
-      enum: ['m', 's', 'h',"", null],
-      default: null
-    },
-    duration: {
       type: Number,
-      min: 0,
-      max: 60,
       default: null
-    }
   },
   target_time: {
-    interval: {
-      type: String,
-      enum: ['m', 's', 'h', "", null],
-      default: null
-    },
-    duration: {
-      type: Number,
-      min: 0,
-      max: 60,
-      default: null
-    }
+    type: Number,
+    default: null
   },
-  target_distance_km: {
+  target_distance: {
     type: Number,
     default: null
   },
@@ -121,24 +98,15 @@ const ExerciseSet_Schema = new mongoose.Schema({
     type: Number,
     default: null
   },
-  actual_weight_kg: {
+  actual_weight: {
     type: Number,
     default: null
   },
   actual_time: {
-    interval: {
-      type: String,
-      enum: ['m', 's', 'h', "", null],
-      default: null
-    },
-    duration: {
-      type: Number,
-      min: 0,
-      max: 60,
-      default: null
-    }
+    type: Number,
+    default: null
   },
-  actual_distance_km: {
+  actual_distance: {
     type: Number,
     default: null
   },
@@ -150,7 +118,21 @@ const ExerciseSet_Schema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+})
 
+
+ExerciseSet_Schema.pre('save', async function(next){
+  const user = await User.findById(this.user)
+  const exercise = await Exercise.findById(this.exercise)
+  if(user){
+    this.unit_of_measurement = user.measurement_system
+  }
+
+  if(exercise){
+    this.exercise_name = exercise.name
+  }
+
+  next()
 })
 
 

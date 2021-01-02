@@ -102,15 +102,23 @@ Routine_Schema.virtual('weeks', {
   justOne: false
 })
 
-Routine_Schema.virtual('exercises', {
+Routine_Schema.virtual('set_groups', {
+  ref: 'SetGroup',
+  localField: '_id',
+  foreignField: 'routine',
+  justOne: false
+})
+
+Routine_Schema.virtual('exercise_sets', {
   ref: 'ExerciseSet',
   localField: '_id',
   foreignField: 'routine',
   justOne: false
 })
 
+
+
 Routine_Schema.pre('save', function(next){
-  console.log("PRE SAVE - SLUGIFY".red)
   this.slug = slugify(this.name, {
     lower: true,
     remove: /[*+.()'"!:@]/g
@@ -119,7 +127,6 @@ Routine_Schema.pre('save', function(next){
 })
 
 Routine_Schema.pre('findOneAndUpdate', async function(next){
-  console.log("PRE UPDATE - SLUGIFY".red)
   this._update.slug = await slugify(this._update.name, {
     lower: true,
     remove: /[*+.()'"!:@]/g
