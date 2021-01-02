@@ -1,9 +1,10 @@
 const express = require('express')
-//  /api/v1.0/set-groups
+//  /api/v1.0/exercise-sets
 
 // bring in controllers
 const {
-  createExerciseSet, 
+  createExerciseSet,
+  createManyExerciseSets,
   getAllExerciseSets, 
   deleteExerciseSets,
   getExerciseSetById,
@@ -22,6 +23,10 @@ router
   .route('/')
   .post(createExerciseSet)
   .get(advancedQuery(ExerciseSet) , getAllExerciseSets)
+
+router
+  .route('/create-many')
+  .post(createManyExerciseSets)
 
 router
   .route('/:exerciseSetId')

@@ -15,18 +15,13 @@ const asyncHandler = require("../middleware/asyncHandler")
 // @access  Private
 exports.createSetGroup = asyncHandler(async (req, res, next) => {
 
-  const {exercise, routine, week, day, user} = req.body // day is the only one that's not an _id (UMTWRFS)
+  const {routine, week, week_number, day_number, user} = req.body // day is the only one that's not an _id (UMTWRFS)
 
-  if(!exercise || !routine || !week || !day || !user){
-    return res.status(400).send({success: false, error_message: `Must provide exercise id, routine id, week id, user id and day (UMTWRFS)`})
+  if(!routine || !week || !week_number || !day_number || !user){
+    return res.status(400).send({success: false, error_message: `Must provide routine id, week id, user id, week number, and day number`})
   }
 
-  // Check if exercise, routine and week exists
-  const foundExercise = await Exercise.findById(exercise)
-
-  if(!foundExercise){
-    return res.status(400).send({success: false, error_message: `No exercise found with id of ${exercise}`})
-  }
+  // Check if routine and week exists
 
   const foundRoutine = await Routine.findById(routine)
 
