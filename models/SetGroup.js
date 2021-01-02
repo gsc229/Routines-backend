@@ -1,36 +1,30 @@
 const mongoose = require('mongoose')
 
 const SetGroup_Schema = new mongoose.Schema({
-  exercise: {
-    type:  mongoose.Types.ObjectId,
-    ref: 'Exercise',
-    required: [true, "Must provide exercise id"]
-  },
   routine: {
     type:  mongoose.Types.ObjectId,
     ref: 'Routine',
-    required: [true, "Must provide exercise, routine, week, and user ids and day"]
+    required: [true, "Must routine id"]
   },
   week: {
     type:  mongoose.Types.ObjectId,
     ref: 'RoutineWeek',
-    required: [true, "Must provide exercise, routine, week, and user ids and day"]
+    required: [true, "Must provide a week id"]
   },
   user: {
     type:  mongoose.Types.ObjectId,
     ref: 'User',
-    required: [true, "Must provide exercise, routine, week, and user ids and day"]
+    required: [true, "Must provide a user id"]
   },
   week_number: {
     type: Number,
-    required: [true],
+    required: [true, "Must provide a week number"],
     min: 1,
-    max: 7,
-    default: 1
+    max: 50,
   },
   day_number: {
     type: Number,
-    required: [true],
+    required: [true, "Must provide a day number"],
     min: 1,
     max: 7,
     default: 1
