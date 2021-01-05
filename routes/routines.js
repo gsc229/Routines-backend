@@ -5,6 +5,7 @@ const {
   createRoutine,
   getAllRoutines,
   getRoutineById,
+  getFlattenedRoutine,
   editRoutine,
   deleteRoutine,
   createWeek,
@@ -28,6 +29,10 @@ router
   .route('/')
   .post(createRoutine)
   .get(advancedQuery(Routine) ,getAllRoutines)
+
+router
+  .route('/flattened-routine/:routineId')
+  .get(getFlattenedRoutine)
 
 router
   .route('/routine/:routineId')

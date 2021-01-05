@@ -1,5 +1,7 @@
 const Routine = require('../models/Routine')
 const Week = require('../models/RoutineWeek')
+const SetGroup = require('../models/SetGroup')
+const ExerciseSet = require('../models/ExerciseSet')
 const asyncHandler = require("../middleware/asyncHandler");
 
 
@@ -40,6 +42,29 @@ exports.getRoutineById = asyncHandler(async (req, res, next) => {
 
   res.status(200).send(res.advancedResults)
   
+});
+
+// @desc    Get a single routine by ID with weeks, set_groups, and exercise_sets populated with the exercise
+// @route   GET /api/v1.0/routines/flattened-routine/:routineId
+// @access  Private
+exports.getFlattenedRoutine = asyncHandler( async(req, res, next) => {
+
+  const routineId = req.params.routineId
+  if(!routineId){
+    return res.status(400).send({success: false, error_message: 'You did not supply a routine id'})
+  }
+
+  const routine = await Routine.findById(routineId)
+  if(!routine){
+    return res.status(400).send({success: false, error_message: `No routine found with _id of ${routineId}`})
+  }
+
+  const weeks = await Week.find({routine: routineId})
+  const set_groups = await SetGroup.find({routine: routineId})
+  const exercise_sets = await ExerciseSet.find({routine: routineId}).populate('exercise')
+
+  return res.status(200).send({success: true, data: {routine, weeks, set_groups, exercise_sets}})
+
 });
 
 // @desc    Edit a single routine by ID
@@ -90,7 +115,7 @@ exports.deleteRoutine = asyncHandler(async (req, res, next) => {
         return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
       }
 
-      res.status(201).send({ success: true, data: routine, message: "Routine was deleted!" })
+      return res.status(201).send({ success: true, data: routine, message: "Routine was deleted!" })
 
     })
   
@@ -181,7 +206,7 @@ exports.deleteWeek = asyncHandler(async (req, res, next) => {
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
 
-    res.status(201).send({ success: true, data: week })
+    return res.status(201).send({ success: true, data: week })
     
   })
   

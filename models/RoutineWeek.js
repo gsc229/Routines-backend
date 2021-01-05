@@ -47,7 +47,7 @@ RoutineWeek_Schema.pre('deleteOne', {document:true, query: false}, async functio
   console.log(`DELETE RoutineWeek cascade to SetGroup, ExerciseSet`)
 
   await this.model('SetGroup').deleteMany({
-    routine: this._id
+    week: this._id
   })
   
   await this.model('ExerciseSet').deleteMany({

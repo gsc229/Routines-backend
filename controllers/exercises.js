@@ -81,8 +81,12 @@ exports.deleteExercises = asyncHandler(async (req, res, next) => {
     return res.status(400).send({ success: false, error_message: 'No exercise found with that id'})
   }
 
-  exercise.deleteOne()
+  exercise.deleteOne((err, exercise)=> {
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+    return res.status(201).send({ success: true, data: exercise, message: "Exercise was deleted!" })
+  })
 
-  return res.status(200).json({ success: true, data: {} })
 
 });

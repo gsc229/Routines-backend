@@ -96,7 +96,7 @@ SetGroup_Schema.pre('deleteOne', {document:true, query: false}, async function(n
   console.log(`DELETE SetGroup cascade to ExerciseSet`)
 
   await this.model('ExerciseSet').deleteMany({
-    week: this._id
+    set_group: this._id
   })
   next()
 })

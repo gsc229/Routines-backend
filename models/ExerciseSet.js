@@ -34,7 +34,7 @@ const ExerciseSet_Schema = new mongoose.Schema({
   },
   day: {
     type: String, 
-    enum: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+    enum: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "", null]
   },
   day_number:{
     type: Number,
