@@ -153,8 +153,12 @@ exports.deleteExerciseSets = asyncHandler(async (req, res, next) => {
     return res.status(400).send({ success: false, error_message: 'No exercise set found with that id'})
   }
 
-  exerciseSet.deleteOne()
+  exerciseSet.deleteOne((err, exerciseSet)=>{
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+    return res.status(201).send({ success: true, data: exerciseSet, message: "Exercise set was deleted!" })
+  })
 
-  return res.status(200).json({ success: true, data: {} })
 
 });

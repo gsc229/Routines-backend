@@ -77,7 +77,7 @@ const Routine_Schema = new mongoose.Schema({
 
 /* ================ DELETE Cascading ======================= */
 Routine_Schema.pre('deleteOne', {document:true, query: false}, async function(next){
-  console.log(`DELETE Routine cascade RoutineWeek, ExerciseSet`)
+  console.log(`DELETE Routine cascade RoutineWeek, SetGroup, ExerciseSet`)
   console.log({this: this, thisDotId: this._id})
 
   await this.model('RoutineWeek').deleteMany({
