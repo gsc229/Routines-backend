@@ -113,11 +113,9 @@ const ExerciseSet_Schema = new mongoose.Schema({
   actual_laps: {
     type: Number,
     default: null
-  },
-  created_at: {
-    type: Date,
-    default: Date.now
   }
+},{
+  timestamps: true
 })
 
 

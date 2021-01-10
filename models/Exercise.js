@@ -57,12 +57,10 @@ const Exercise_Schema = new mongoose.Schema({
   video_url: {
     type: String,
     trim: true,
-  },
-  created_at: {
-    type: Date,
-    default: Date.now
   }
 
+},{
+  timestamps: true
 })
 
 

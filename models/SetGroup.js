@@ -80,15 +80,12 @@ const SetGroup_Schema = new mongoose.Schema({
   target_sets: {
     type: Number,
     default: null
-  },
-  created_at: {
-    type: Date,
-    default: Date.now
   }
 },
 {
   toJSON: {virtuals: true},
-  toObject: {virtuals: true}
+  toObject: {virtuals: true},
+  timestamps: true
 })
 
 /* ================ DELETE Cascading ======================= */

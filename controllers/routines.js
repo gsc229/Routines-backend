@@ -12,16 +12,14 @@ const asyncHandler = require("../middleware/asyncHandler");
 // @access  Private
 exports.createRoutine = asyncHandler(async (req, res, next) => {
   
-  console.log('createRoutine'.america)
-  console.log("req.body: ",req.body)
-  const routine = new Routine(req.body)
-  console.log({routine})
-  routine.save((err, routine) => {
+  const newRoutine = new Routine(req.body)
+
+  newRoutine.save((err, routine) => {
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     } 
 
-    res.status(201).send({ success: true, data: routine });
+    return res.status(201).send({ success: true, data: routine });
   })
   
 });
@@ -71,7 +69,7 @@ exports.getFlattenedRoutine = asyncHandler( async(req, res, next) => {
 // @route   PUT /api/v1.0/routines/routine/:routineId
 // @access  Private
 exports.editRoutine = asyncHandler(async (req, res, next) => {
-
+  console.log('editRoutine\n '.red, {body: req.body, params: req.params})
   await Routine
   .findByIdAndUpdate(
     req.params.routineId , // id

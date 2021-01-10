@@ -7,6 +7,7 @@ const {
   getAllSetGroups,
   getSetGroupById,
   editSetGroup,
+  updateManySetGroups,
   deleteSetGroup
 } = require('../controllers/set_groups')
 // bring in models/schemas
@@ -23,6 +24,9 @@ router
   .route('/')
   .post(createSetGroup)
   .get(advancedQuery(SetGroup), getAllSetGroups)
+  router
+  .route('/update-many')
+  .put(updateManySetGroups)
   
 router
   .route('/:setGroupId')

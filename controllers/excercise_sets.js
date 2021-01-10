@@ -58,8 +58,12 @@ exports.createExerciseSet = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1.0/exercise-set/create-many
 // @access  Private
 exports.createManyExerciseSets = asyncHandler(async (req, res, next) => {
-  const {routine, week, set_group, newSetsArray} = req.body
 
+  console.log('createManyExerciseSets req.body', req.body)
+
+  const {routine, week, set_group} = req.body[0]
+
+  console.log({routine, week, set_group})
   
   // Check if exercise, routine and week exists
   /* const foundExercise = await Exercise.findById(exercise)
@@ -87,16 +91,19 @@ exports.createManyExerciseSets = asyncHandler(async (req, res, next) => {
   }
 
   // INSERT MANY
-  ExerciseSet.insertMany(newSetsArray)
-  .then(response => {
-    console.log('createManyExerciseSets', {response})
-    return res.status(201).send({ success: true, data: response })
-  })
-  .catch(error => {
-    console.log('createManyExerciseSets ', {error})
-    return res.status(400).send({success: false, error_message: error.message, error_name: error.name })
-  })
+  const newSets = await ExerciseSet.insertMany(req.body)
 
+  console.log(JSON.stringify({newSets}, '', 2).bgYellow)
+
+  if(newSets){
+    const newSetsPopulateExercise = await ExerciseSet.find({set_group}).populate('exercise')
+    console.log(JSON.stringify({newSetsPopulateExercise}, '', 2).bgGreen)
+    if(newSetsPopulateExercise){
+      return res.status(201).send({ success: true, data: newSetsPopulateExercise })
+    }
+  }
+
+  return res.status(400).send({success: false, error_message: error.message, error_name: error.name })
 
 
 });

@@ -50,10 +50,6 @@ const User_Schema = new mongoose.Schema({
   },
   token: {
     type: String
-  },
-  created_at: {
-    type: Date,
-    default: Date.now
   }
 },
 {
@@ -62,7 +58,8 @@ const User_Schema = new mongoose.Schema({
   },
   toJSON: {
     virtuals: true
-  }
+  },
+  timestamps: true
 })
 
 
