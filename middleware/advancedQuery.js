@@ -45,9 +45,9 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
   }
 
   // nested populate
-  let populate = populateBuilder(req.query)
+  let nestedPopulate = populateBuilder(req.query)
 
-  if(populate) query = query.populate(populate)
+  if(nestedPopulate) query = query.populate(nestedPopulate)
 
   // first level populate
   if(req.query.populate_weeks){

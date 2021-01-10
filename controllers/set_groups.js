@@ -72,14 +72,42 @@ exports.editSetGroup = asyncHandler(async (req, res, next) => {
     req.body, // changes
     {new: true, runValidators: true}, // options
 
-    (err, routineEx) => { // callback
+    (err, setGroup) => { // callback
 
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
 
-    if(routineEx){
-      return res.status(201).send({ success: true, data: routineEx })
+    if(setGroup){
+      return res.status(201).send({ success: true, data: setGroup })
+    }
+
+    return res.status(400).send({success: false, error_message: `No set gruoup found with id of ${req.params.setGroupId}`})
+
+  }).populate('exercise')
+
+});
+
+// @desc    Update many set groups
+// @route   PUT /api/v1.0/set-groups/update-many
+// @access  Private
+exports.updateManySetGroups = asyncHandler(async (req, res, next) => {
+  const { query, changes } = req.body // {week: 020wewlk220}, { week_number: 2 }
+  console.log("updateMany".america ,{query, changes})
+  await SetGroup
+  .updateMany(
+    query , // id
+    changes, // changes
+    {new: true}, // options
+
+    (err, setGroups) => { // callback
+
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+
+    if(setGroups){
+      return res.status(201).send({ success: true, data: setGroups })
     }
 
     return res.status(400).send({success: false, error_message: `No set gruoup found with id of ${req.params.setGroupId}`})

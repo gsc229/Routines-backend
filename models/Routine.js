@@ -64,15 +64,12 @@ const Routine_Schema = new mongoose.Schema({
       type: String,
       maxlength: [50, "Cannot exceed 50 characters"],
       default: null
-    },
-    created_at: {
-      type: Date,
-      default: Date.now
-    } 
+    }
 },
 {
   toJSON: {virtuals: true},
-  toObject: {virtuals: true}
+  toObject: {virtuals: true},
+  timestamps: true
 })
 
 /* ================ DELETE Cascading ======================= */
@@ -126,11 +123,15 @@ Routine_Schema.pre('save', function(next){
   next()
 })
 
-Routine_Schema.pre('findOneAndUpdate', async function(next){
-  this._update.slug = await slugify(this._update.name, {
-    lower: true,
-    remove: /[*+.()'"!:@]/g
-  })
+Routine_Schema.pre('findOneAndUpdate', function(next){
+  console.log('SLUGIFY this:'.bgRed, this._update.slug, this._update.name)
+  if(this._update.name && this._update.slug){
+    this._update.slug = slugify(this._update.name, {
+      lower: true,
+      remove: /[*+.()'"!:@]/g
+    })
+  }
+  
   next()
 })
 

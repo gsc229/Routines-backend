@@ -14,7 +14,7 @@ const RoutineWeek_Schema = new mongoose.Schema({
   week_number: {
     type: Number,
     default: null,
-    required: [true, "Need a week number"]
+    //required: [true, "Need a week number"]
   },
   week_of_year: {
     type: Number,
@@ -27,10 +27,6 @@ const RoutineWeek_Schema = new mongoose.Schema({
   year: {
     type: Date,
     default: null
-  },
-  created_at: {
-    type: Date,
-    default: Date.now
   }
 },
 {
@@ -39,7 +35,8 @@ const RoutineWeek_Schema = new mongoose.Schema({
   },
   toObject: {
     virtuals: true
-  }
+  },
+  timestamps: true
 })
 
 /* ================ DELETE Cascading ======================= */
