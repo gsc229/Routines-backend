@@ -32,6 +32,10 @@ const ExerciseSet_Schema = new mongoose.Schema({
     type: String,
     trim: true    
   },
+  color: {
+    type: String,
+    trim: true
+  },
   day: {
     type: String, 
     enum: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "", null]
