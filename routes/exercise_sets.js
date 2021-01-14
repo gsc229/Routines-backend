@@ -8,7 +8,8 @@ const {
   getAllExerciseSets, 
   deleteExerciseSets,
   getExerciseSetById,
-  editExerciseSet
+  editExerciseSet, 
+  bulkUpdateExerciseSets
 } = require('../controllers/excercise_sets')
 // bring in models/schemas
 const ExerciseSet = require('../models/ExerciseSet')
@@ -27,6 +28,10 @@ router
 router
   .route('/create-many')
   .post(createManyExerciseSets)
+
+router
+  .route('/bulk-update')
+  .put(bulkUpdateExerciseSets)
 
 router
   .route('/:exerciseSetId')
