@@ -116,6 +116,30 @@ exports.updateManySetGroups = asyncHandler(async (req, res, next) => {
 
 });
 
+// @desc    Edit multiple SetGroups by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]
+// @route   PUT /api/v1.0/set-groups/bulk-write
+// @access  Private
+exports.bulkWriteSetGroups = asyncHandler(async(req, res, next) => {
+  const {updatesArray, weekId} = req.body
+  await Week
+  .bulkWrite(updatesArray, async(err, bulkWriteResults) => {
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+
+    if(bulkWriteResults){
+      const updatedSetGroups = await SetGroup.find({week: weekId})
+      if(updatedSetGroups){
+        return res.status(201).send({ success: true, data: updatedSetGroups, bulkWriteResults })
+      }
+    }
+
+    return res.status(500).send({success: false, error_message: `Somthing went wrong with the bulkwrite`})
+
+  })
+  
+})
+
 // @desc    Delete a routine excercises
 // @route   DELTE /api/v1.0/set-groups/:setGroupId
 // @access  Private

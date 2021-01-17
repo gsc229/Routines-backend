@@ -48,9 +48,11 @@ exports.createExerciseSet = asyncHandler(async (req, res, next) => {
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     } 
-
+    
     res.status(201).send({ success: true, data: newExerciseSet });
   })
+
+
   
 });
 
@@ -153,18 +155,21 @@ exports.editExerciseSet = asyncHandler(async (req, res, next) => {
 // @desc    Edit multiple exercise sets by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]
 // @route   PUT /api/v1.0/exercise-sets/bulk-edit
 // @access  Private
-exports.bulkUpdateExerciseSets = asyncHandler(async(req, res, next) => {
+exports.bulkWritingExerciseSets = asyncHandler(async(req, res, next) => {
+
+  const {updatesArray, setGroupId} = req.body
 
   await ExerciseSet
-  .bulkWrite(req.body, (err, bulkwriteResults) => {
+  .bulkWrite(updatesArray, async(err, bulkWriteResults) => {
     if(err){
-      console.log('bulkUpdateExerciseSets: '.bgRed, {err})
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
 
-    if(bulkwriteResults){
-      console.log('bulkwriteExerciseSets: '.bgGreen, {bulkwriteResults})
-      return res.status(201).send({success: true, data: bulkwriteResults})
+    if(bulkWriteResults){
+      const newSetsPopulateExercise = await ExerciseSet.find({set_group: setGroupId}).populate('exercise')
+      if(newSetsPopulateExercise){
+        return res.status(201).send({ success: true, data: newSetsPopulateExercise, bulkWriteResults })
+      }
     }
 
     return res.status(500).send({success: false, error_message: `Somthing went wrong with the bulkwrite`})

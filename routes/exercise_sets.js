@@ -9,7 +9,7 @@ const {
   deleteExerciseSets,
   getExerciseSetById,
   editExerciseSet, 
-  bulkUpdateExerciseSets
+  bulkWritingExerciseSets
 } = require('../controllers/excercise_sets')
 // bring in models/schemas
 const ExerciseSet = require('../models/ExerciseSet')
@@ -31,7 +31,7 @@ router
 
 router
   .route('/bulk-update')
-  .put(bulkUpdateExerciseSets)
+  .put(bulkWritingExerciseSets)
 
 router
   .route('/:exerciseSetId')

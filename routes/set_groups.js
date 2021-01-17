@@ -8,7 +8,8 @@ const {
   getSetGroupById,
   editSetGroup,
   updateManySetGroups,
-  deleteSetGroup
+  deleteSetGroup,
+  bulkWriteSetGroups
 } = require('../controllers/set_groups')
 // bring in models/schemas
 const SetGroup = require('../models/SetGroup')
@@ -24,9 +25,9 @@ router
   .route('/')
   .post(createSetGroup)
   .get(advancedQuery(SetGroup), getAllSetGroups)
-  router
-  .route('/update-many')
-  .put(updateManySetGroups)
+router
+.route('/update-many')
+.put(updateManySetGroups)
   
 router
   .route('/:setGroupId')
@@ -34,7 +35,9 @@ router
   .put(editSetGroup)
   .delete(deleteSetGroup)
 
-
+router
+  .route('/bulk-write')
+  .put(bulkWriteSetGroups)
 
 // export router
 module.exports = router
