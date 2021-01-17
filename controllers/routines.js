@@ -190,6 +190,31 @@ exports.editWeek = asyncHandler(async (req, res, next) => {
 });
 
 
+// @desc    Edit multiple weeks by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]
+// @route   PUT /api/v1.0/routines/bulk-write/weeks
+// @access  Private
+exports.bulkWriteWeeks = asyncHandler(async(req, res, next) => {
+  const {updatesArray, routineId} = req.body
+  await Week
+  .bulkWrite(updatesArray, async(err, bulkWriteResults) => {
+    if(err){
+      return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
+    }
+
+    if(bulkWriteResults){
+      const updatedWeeks = await Week.find({routine: routineId})
+      if(updatedWeeks){
+        return res.status(201).send({ success: true, data: updatedWeeks, bulkWriteResults })
+      }
+    }
+
+    return res.status(500).send({success: false, error_message: `Somthing went wrong with the bulkwrite`})
+
+  })
+  
+})
+
+
 
 // @desc    Delete a week and all it's children
 // @route   DELETE /api/v1.0/routines/weeks/:weekId

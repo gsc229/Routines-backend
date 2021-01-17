@@ -12,9 +12,10 @@ const {
   getAllWeeks,
   getWeekById,
   editWeek,
+  bulkWriteWeeks,
   deleteWeek
 } = require('../controllers/routines')
-
+/* '/api/v1.0/routines' */
 const Routine = require('../models/Routine')
 const RoutineWeek = require('../models/RoutineWeek')
 
@@ -51,6 +52,10 @@ router
   .get(advancedQuery(RoutineWeek), getWeekById)
   .put(editWeek)
   .delete(deleteWeek)
+
+  router
+    .route('/bulk-write/weeks')
+    .put(bulkWriteWeeks)
 
 
 // export router

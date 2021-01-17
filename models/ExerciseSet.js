@@ -132,6 +132,7 @@ ExerciseSet_Schema.pre('save', async function(next){
 
   if(exercise){
     this.exercise_name = exercise.name
+    this.exercise = exercise
   }
 
   next()
