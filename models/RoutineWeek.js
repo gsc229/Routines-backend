@@ -11,6 +11,11 @@ const RoutineWeek_Schema = new mongoose.Schema({
     required: [true, "Needs the id of the user"], 
     ref: 'User'
   },
+  copied_from: {
+    type: mongoose.Types.ObjectId,
+    ref: 'RoutineWeek',
+    default: null
+  },
   week_number: {
     type: Number,
     default: null,

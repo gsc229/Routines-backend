@@ -20,6 +20,11 @@ const Routine_Schema = new mongoose.Schema({
       required: [true, "Needs the id of the originial creator"], 
       ref: 'User'
     },
+    copied_from: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Routine',
+      default: null
+    },
     name: {
       type: String,
       required: [true, "Must provide a routine name"], 

@@ -33,6 +33,11 @@ const Exercise_Schema = new mongoose.Schema({
     ref: 'User',  
     required: [true, "Needs the id of the originial creator"]
   },
+  copied_from: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Exercise',
+    default: null
+  },
   body_part: {
     type: String,
     trim: true,

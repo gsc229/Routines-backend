@@ -16,6 +16,11 @@ const SetGroup_Schema = new mongoose.Schema({
     ref: 'User',
     required: [true, "Must provide a user id"]
   },
+  copied_from: {
+    type: mongoose.Types.ObjectId,
+    ref: 'SetGroup',
+    default: null
+  },
   week_number: {
     type: Number,
     required: [true, "Must provide a week number"],
