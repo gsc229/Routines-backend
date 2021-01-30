@@ -28,6 +28,10 @@ router
 router
 .route('/update-many')
 .put(updateManySetGroups)
+
+router
+  .route('/bulk-write')
+  .put(bulkWriteSetGroups)
   
 router
   .route('/:setGroupId')
@@ -35,9 +39,7 @@ router
   .put(editSetGroup)
   .delete(deleteSetGroup)
 
-router
-  .route('/bulk-write')
-  .put(bulkWriteSetGroups)
+
 
 // export router
 module.exports = router

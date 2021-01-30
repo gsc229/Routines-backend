@@ -28,6 +28,11 @@ const ExerciseSet_Schema = new mongoose.Schema({
     ref: 'User',
     required: [true, "Must provide user id"]
   },
+  copied_from: {
+    type: mongoose.Types.ObjectId,
+    ref: 'ExerciseSet',
+    default: null
+  },
   exercise_name: {
     type: String,
     trim: true    

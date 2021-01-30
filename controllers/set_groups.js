@@ -120,15 +120,19 @@ exports.updateManySetGroups = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/v1.0/set-groups/bulk-write
 // @access  Private
 exports.bulkWriteSetGroups = asyncHandler(async(req, res, next) => {
-  const {updatesArray, weekId} = req.body
-  await Week
+  console.log(JSON.stringify(req.body, '', 2).bgRed)
+  const {updatesArray, findByObj} = req.body // findBy === {week: weekId} || {routine: rotuineId}
+
+  console.log('set_group controller',JSON.stringify({updatesArray, findByObj}, '', 2).red)
+
+  await SetGroup
   .bulkWrite(updatesArray, async(err, bulkWriteResults) => {
     if(err){
       return res.status(400).send({success: false, error_message: err.message, error_name: err.name })
     }
 
     if(bulkWriteResults){
-      const updatedSetGroups = await SetGroup.find({week: weekId})
+      const updatedSetGroups = await SetGroup.find(findByObj)
       if(updatedSetGroups){
         return res.status(201).send({ success: true, data: updatedSetGroups, bulkWriteResults })
       }
