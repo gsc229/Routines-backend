@@ -45,7 +45,7 @@ const Exercise_Schema = new mongoose.Schema({
   },
   muscle_group: {
     type: String,
-    enum: ["Chest", "Back", "Arms", "Shoulders", "Legs", "Calves", "Full Body", "Multiple Major Muscle Groups", "",null],
+    enum: ["Chest", "Back", "Abs", "Arms", "Shoulders", "Legs", "Calves", "Full Body", "Multiple Major Muscle Groups", "",null],
     default: null
   },
   target_muscle: {
