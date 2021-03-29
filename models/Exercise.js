@@ -62,8 +62,11 @@ const Exercise_Schema = new mongoose.Schema({
   video_url: {
     type: String,
     trim: true,
+  },
+  color: {
+    type: String, 
+    trim: true
   }
-
 },{
   timestamps: true
 })
