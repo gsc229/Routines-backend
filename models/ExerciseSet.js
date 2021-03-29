@@ -95,6 +95,18 @@ const ExerciseSet_Schema = new mongoose.Schema({
     type: Number,
     default: null
   },
+  target_hours: {
+    type: Number,
+    default: null
+  },
+  target_minutes: {
+    type: Number,
+    default: null
+  },
+  target_seconds:{
+    type: Number,
+    default: null
+  },
   target_distance: {
     type: Number,
     default: null
@@ -112,6 +124,18 @@ const ExerciseSet_Schema = new mongoose.Schema({
     default: null
   },
   actual_time: {
+    type: Number,
+    default: null
+  },
+  actual_hours: {
+    type: Number,
+    default: null
+  },
+  actual_minutes: {
+    type: Number,
+    default: null
+  },
+  actual_seconds:{
     type: Number,
     default: null
   },
