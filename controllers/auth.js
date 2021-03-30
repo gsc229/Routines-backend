@@ -8,13 +8,15 @@ const ErrorResponse = require('../utils/errorResponse')
 // @access  Public
 exports.createUser = asyncHandler(async (req, res, next) => {
   const { email, password, username } = req.body;
+  console.log('createUser: body:', req.body)
+
+  const newUser = new User(req.body)
+
   
-  return await User.create({
-    email,
-    username,
-    password
-  }).exec((err, userSansPw) => {
+
+  newUser.save((err, userSansPw) => {
     if(err){
+      console.log({err})
       return res.status(400).send({success: false, error_message: err.message, err_name: err.name})
     }
     return sendTokenResponse(userSansPw, 200, res)

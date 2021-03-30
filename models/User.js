@@ -7,6 +7,7 @@ const User_Schema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add an email'],
     unique: true,
+    index: true,
     lowercase: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -14,9 +15,8 @@ const User_Schema = new mongoose.Schema({
     ]
   },
   username: {
-    type: String,
+    type: String, 
     trim: true,
-    required: [true, 'Please add a username'],
     unique: true
   },
   password: {
@@ -28,7 +28,7 @@ const User_Schema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["Male", "Female"],
+    enum: ["Male", "Female", null],
     default: null
   },
   age: {
@@ -63,7 +63,17 @@ const User_Schema = new mongoose.Schema({
 })
 
 
+
 // ====== Hooks =======
+
+// default username
+User_Schema.pre('save', async function(next){
+  if(!this.username){
+    this.username = this._id
+  }
+
+  next()
+})
 
 
 // hash password 
