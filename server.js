@@ -13,10 +13,7 @@ dotenv.config({path: './config/config.env'})
 // Connect to database
 connectDB()
 
-// Logging middleware
-if(process.env.NODE_ENV==='development'){
-  app.use(morgan('dev'))
-}
+
 
 // Bring the route files to pass the entry point routes of each resource
 const authRoutes = require('./routes/auth')
@@ -29,6 +26,11 @@ const queryTester = require('./routes/query_tester')
 
 // Initiate the app
 const app = express()
+
+// Logging middleware
+if(process.env.NODE_ENV==='development'){
+  app.use(morgan('dev'))
+}
 
 // Body parser
 app.use(express.json())
