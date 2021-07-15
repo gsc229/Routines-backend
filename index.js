@@ -13,8 +13,6 @@ dotenv.config({path: './config/config.env'})
 // Connect to database
 connectDB()
 
-
-
 // Bring the route files to pass the entry point routes of each resource
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users')
