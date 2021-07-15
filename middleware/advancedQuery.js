@@ -34,7 +34,7 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
   let queryStr = JSON.stringify(reqQuery)
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   
-  console.log('BEFORE: ', {queryStr})
+  
   let query = model.find(JSON.parse(queryStr))
   /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
 
@@ -75,7 +75,7 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
     query = query.populate('exercises')
   }
 
-
+  // 
   populate = ""
   if(req.query.sort){
     let sortBy = req.query.sort
@@ -93,9 +93,7 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
   const total_pages = database_resource_count > limit ? Math.ceil(database_resource_count / limit) : 1
 
   query = query.skip(startIndex).limit(limit)
-  
-  //const results = await query
-  /* ^^^^^^^^^^^^^^^^^^^^^^^^ */
+
   const pagination = {
     database_resource_count,
     total_pages,
@@ -123,15 +121,23 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
     }
   }
 
+
+
   query.exec((err, results) => {
     if(err){
      return res.status(400).send({success: false, error_message: err.message, err_name: err.name})
     }
 
     if(results){
+      const size = new TextEncoder().encode(JSON.stringify(results)).length
+      const kb = (size / 1025).toFixed(2)
+      const mb = (kb / 1025).toFixed(2)
       pagination.total_results = results.length,
       res.advancedResults = {
         success: true,
+        size,
+        kb,
+        mb,
         pagination,
         data: results
         
@@ -142,9 +148,6 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
     return res.status(500).send({success: false, error_message: "Your request could not be processed."})
 
   })
-
-
-  
 
 }
 
