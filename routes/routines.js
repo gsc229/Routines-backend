@@ -1,5 +1,5 @@
 const express = require('express')
-
+const { updateRoutineDates  } = require('../controllers/updateRoutineDates')
 // bring in controllers
 const {
   createRoutine,
@@ -40,6 +40,11 @@ router
   .get(advancedQuery(Routine), getRoutineById)
   .put(editRoutine)
   .delete(deleteRoutine)
+
+router
+.route('/update-routine-dates/:routineId')
+.put(updateRoutineDates)
+
 
 /* ============= Week Routes ================= */
 router

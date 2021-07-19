@@ -29,7 +29,7 @@ const advancedQuery = (model, populate) => async (req, res, next) => {
     'populate_exercise_sets_exercise'
   ]
 
-  removeFields.forEach(param => delete reqQuery[param])
+  removeFields.forEach(field => delete reqQuery[field])
 
   let queryStr = JSON.stringify(reqQuery)
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)

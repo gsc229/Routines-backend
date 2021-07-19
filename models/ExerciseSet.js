@@ -71,6 +71,10 @@ const ExerciseSet_Schema = new mongoose.Schema({
     enum: ["Imperial", "Metric"],
     default: "Metric"
   },
+  scheduled_date: {
+    type: Date,
+    default: null
+  },
   scheduled_time: {
     type: Date,
     default: null

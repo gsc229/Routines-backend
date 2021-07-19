@@ -131,7 +131,7 @@ Routine_Schema.pre('save', function(next){
 })
 
 Routine_Schema.pre('findOneAndUpdate', function(next){
-  console.log('SLUGIFY this:'.bgRed, this._update.slug, this._update.name)
+  //console.log('SLUGIFY this:'.bgRed, this._update.slug, this._update.name)
   if(this._update.name && this._update.slug){
     this._update.slug = slugify(this._update.name, {
       lower: true,
