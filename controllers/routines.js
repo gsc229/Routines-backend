@@ -10,7 +10,7 @@ const asyncHandler = require("../middleware/asyncHandler");
 // @desc    Create a new routine - required fields: original_creator, user, name
 // @route   POST /api/v1.0/routines
 // @access  Private
-exports.createRoutine = asyncHandler(async (req, res, next) => {
+exports.createRoutine = asyncHandler(async (req, res) => {
   
   const newRoutine = new Routine(req.body)
 
@@ -27,7 +27,7 @@ exports.createRoutine = asyncHandler(async (req, res, next) => {
 // @desc    Get all routines
 // @route   GET /api/v1.0/routines
 // @access  Private
-exports.getAllRoutines = asyncHandler(async (req, res, next) => {
+exports.getAllRoutines = asyncHandler(async (req, res) => {
 
   res.status(200).send(res.advancedResults)
   
@@ -36,7 +36,7 @@ exports.getAllRoutines = asyncHandler(async (req, res, next) => {
 // @desc    Get a single routine by ID
 // @route   GET /api/v1.0/routines/routine/:routineId
 // @access  Private
-exports.getRoutineById = asyncHandler(async (req, res, next) => {
+exports.getRoutineById = asyncHandler(async (req, res) => {
 
   res.status(200).send(res.advancedResults)
   
@@ -45,7 +45,7 @@ exports.getRoutineById = asyncHandler(async (req, res, next) => {
 // @desc    Get a single routine by ID with weeks, set_groups, and exercise_sets populated with the exercise
 // @route   GET /api/v1.0/routines/flattened-routine/:routineId
 // @access  Private
-exports.getFlattenedRoutine = asyncHandler( async(req, res, next) => {
+exports.getFlattenedRoutine = asyncHandler( async(req, res) => {
 
   const routineId = req.params.routineId
   if(!routineId){
@@ -70,7 +70,7 @@ exports.getFlattenedRoutine = asyncHandler( async(req, res, next) => {
 // @desc    Edit a single routine by ID
 // @route   PUT /api/v1.0/routines/routine/:routineId
 // @access  Private
-exports.editRoutine = asyncHandler(async (req, res, next) => {
+exports.editRoutine = asyncHandler(async (req, res) => {
   console.log('editRoutine\n '.red, {body: req.body, params: req.params})
   await Routine
   .findByIdAndUpdate(
@@ -100,7 +100,7 @@ exports.editRoutine = asyncHandler(async (req, res, next) => {
 // @desc    Delete a routine and all it's children
 // @route   DELETE /api/v1.0/routines/:routineId
 // @access  Private
-exports.deleteRoutine = asyncHandler(async (req, res, next) => {
+exports.deleteRoutine = asyncHandler(async (req, res) => {
 
   const routineToDelete = await Routine.findById(req.params.routineId)
 
@@ -125,7 +125,7 @@ exports.deleteRoutine = asyncHandler(async (req, res, next) => {
 // @desc    Create a new week for a routine - required fields: user, routine
 // @route   POST /api/v1.0/routines/weeks
 // @access  Private
-exports.createWeek = asyncHandler(async (req, res, next) => {
+exports.createWeek = asyncHandler(async (req, res) => {
 
   // Check if routine exists
   const routine = await Routine.findById(req.body.routine)
@@ -149,7 +149,7 @@ exports.createWeek = asyncHandler(async (req, res, next) => {
 // @desc    Get all weeks from all routines - required fields: original_creator, user, name
 // @route   GET /api/v1.0/routines/weeks
 // @access  Private
-exports.getAllWeeks = asyncHandler(async (req, res, next) => {
+exports.getAllWeeks = asyncHandler(async (req, res) => {
   res.status(200).send(res.advancedResults)
   
 });
@@ -157,7 +157,7 @@ exports.getAllWeeks = asyncHandler(async (req, res, next) => {
 // @desc    Get a Week by ID
 // @route   GET /api/v1.0/routines/weeks/:weekId
 // @access  Private
-exports.getWeekById = asyncHandler(async (req, res, next) => {
+exports.getWeekById = asyncHandler(async (req, res) => {
 
   res.status(200).send(res.advancedResults)
   
@@ -166,7 +166,15 @@ exports.getWeekById = asyncHandler(async (req, res, next) => {
 // @desc    Edit a week by ID
 // @route   PUT /api/v1.0/routines/weeks/:weekId
 // @access  Private
-exports.editWeek = asyncHandler(async (req, res, next) => {
+exports.editWeek = asyncHandler(async (req, res) => {
+
+  /* if(req.body.week_number || req.body.week_start_date){
+    return res.status(400).json({
+      success: false,
+      message: `You cannot edit week_number or week_start_date through PUT routines/weeks/:weekId.
+      Use PUT /routines/weeks/update-week-dates/:weekId`
+    })
+  } */
 
   await Week
   .findByIdAndUpdate(
@@ -195,7 +203,7 @@ exports.editWeek = asyncHandler(async (req, res, next) => {
 // @desc    Edit multiple weeks by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]
 // @route   PUT /api/v1.0/routines/bulk-write/weeks
 // @access  Private
-exports.bulkWriteWeeks = asyncHandler(async(req, res, next) => {
+exports.bulkWriteWeeks = asyncHandler(async(req, res) => {
   const {updatesArray, routineId} = req.body
   await Week
   .bulkWrite(updatesArray, async(err, bulkWriteResults) => {
@@ -221,7 +229,7 @@ exports.bulkWriteWeeks = asyncHandler(async(req, res, next) => {
 // @desc    Delete a week and all it's children
 // @route   DELETE /api/v1.0/routines/weeks/:weekId
 // @access  Private
-exports.deleteWeek = asyncHandler(async (req, res, next) => {
+exports.deleteWeek = asyncHandler(async (req, res) => {
 
   const weekToDelete = await Week.findById(req.params.weekId)
   

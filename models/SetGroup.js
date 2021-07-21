@@ -70,6 +70,10 @@ const SetGroup_Schema = new mongoose.Schema({
     trim: true,
     default: null
   },
+  scheduled_date: {
+    type: Date,
+    default: null
+  },
   scheduled_time: {
     type: Date,
     default: null

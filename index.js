@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const morgan = require('morgan')
 const helmet = require('helmet')
 const cors = require('cors')
+// eslint-disable-next-line
 const colors = require('colors')
 const connectDB = require('./config/db')
 
@@ -12,11 +13,6 @@ dotenv.config({path: './config/config.env'})
 
 // Connect to database
 connectDB()
-
-// Logging middleware
-if(process.env.NODE_ENV==='development'){
-  app.use(morgan('dev'))
-}
 
 // Bring the route files to pass the entry point routes of each resource
 const authRoutes = require('./routes/auth')
@@ -29,6 +25,11 @@ const queryTester = require('./routes/query_tester')
 
 // Initiate the app
 const app = express()
+
+// Logging middleware
+if(process.env.NODE_ENV==='development'){
+  app.use(morgan('dev'))
+}
 
 // Body parser
 app.use(express.json())
@@ -60,6 +61,7 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT, console.log(`\n *** LISTENING ON PORT ${PORT} ***\n`.yellow.bold))
 
 // Handle unhandled promise rejections
+// eslint-disable-next-line
 process.on('unhandledRejection', (error, promise) => {
   console.log(`Error: ${error.message}`.red);
 });

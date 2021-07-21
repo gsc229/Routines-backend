@@ -1,5 +1,7 @@
 const express = require('express')
-
+const { updateRoutineDates  } = require('../controllers/updateRoutineDates')
+const { updateWeekDates } = require('../controllers/updateWeekDates')
+const { getUpdatedRoutine } = require('../controllers/getUpdatedRoutine')
 // bring in controllers
 const {
   createRoutine,
@@ -41,6 +43,11 @@ router
   .put(editRoutine)
   .delete(deleteRoutine)
 
+router
+.route('/update-routine-dates/:routineId')
+.put(updateRoutineDates, advancedQuery(Routine), getUpdatedRoutine)
+
+
 /* ============= Week Routes ================= */
 router
   .route('/weeks')
@@ -57,6 +64,10 @@ router
     .route('/bulk-write/weeks')
     .put(bulkWriteWeeks)
 
+  router
+  .route('/weeks/update-week-dates/:weekId')
+  .put(updateWeekDates, advancedQuery(Routine), getUpdatedRoutine)
+  
 
 // export router
 module.exports = router
