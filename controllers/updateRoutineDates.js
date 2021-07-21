@@ -24,7 +24,7 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   .populate('set_groups')
   .populate('exercise_sets')
 
-  if(!routine) return res.status(400).json({ success: false, message: `No routine with id: ${routineId}` })
+  if(!routine) return res.status(404).json({ success: false, message: `No routine with id: ${routineId}` })
 
   const bulkWriteResultsData = []
 
@@ -32,9 +32,10 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   const weekIdToNumberAndStartDate = {}
   
   routine.weeks.forEach(week => {
-    const { _id, week_number } = week
+    const { _id } = week
+    const week_number = parseInt(week.week_number)
 
-    if(typeof week_number === 'number' && week_number > 0){
+    if(Number.isNaN(week_number) !== true && week_number > 0){
       const week_start_date = newStartDate.add(week_number - 1, 'week').toISOString()
       weekBulkWrites.push({ updateOne: { filter: { _id }, update: { week_start_date }}})
       weekIdToNumberAndStartDate[_id] = { week_number,  week_start_date }
@@ -53,9 +54,11 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
 
   routine.set_groups.forEach(set_group => {
 
-    const { _id, day_number, week, week_number } = set_group // week = the _id of the week to which the set_group belongs
+    const { _id, week } = set_group // week = the _id of the week to which the set_group belongs
+    const day_number = parseInt(set_group.day_number)
+    const week_number = parseInt(set_group.week_number)
 
-    if(typeof day_number === 'number' && day_number > 0){
+    if(Number.isNaN(week_number) !== true && Number.isNaN(day_number) !== true && day_number > 0){
       const update = {}
       update['scheduled_date'] = dayjs(weekIdToNumberAndStartDate[week]['week_start_date']).add(day_number - 1, 'day').toISOString()
       if(weekIdToNumberAndStartDate[week]['week_number'] !== week_number){
@@ -87,45 +90,9 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   .then(result => bulkWriteResultsData.push({ exercise_sets: result }))
   .catch(error => res.satus(500).json({ success: false, message: "Something went wrong trying to bulk write exercise_sets.", error}))
 
+  req.body.bulkWriteResultsData = bulkWriteResultsData
 
-  if(req.body.return_flattened){
-    const flattendRoutineWithUpdates = await Routine.findById(routineId)
-    .populate( 'weeks')
-    .populate('set_groups')
-    .populate({
-      path: 'exercise_sets',
-      populate: {
-        path: 'exercise'
-      }
-    })
-
-    if(!flattendRoutineWithUpdates){
-      return res.status(500).json({ success: false, message: `Something went wrong trying to retrieve flattened routine ${ routineId } and it's updates. Try again later.`})
-    }
-
-    return res.status(200).json({ success: true, updated_routine: flattendRoutineWithUpdates})
-  }
-
-  const routineWithUpdates = await Routine.findById(routineId)
-  .populate({
-    path: 'weeks',
-    populate: {
-      path: 'set_groups',
-      populate: {
-        path: 'exercise_sets',
-        populate: {
-          path: 'exercisse'
-        }
-      }
-    }
-  })
-
-  if(routineWithUpdates){
-    return res.status(200).json({ success: true, updated_routine: routineWithUpdates, bulkwrite_data: bulkWriteResultsData })
-  }
-
-  
-  return res.status(500).json({ success: false, message: `Something went wrong trying to retrieve routine ${ routineId } and it's updates. Try again later.`})
+  next()
 
 
 });

@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const morgan = require('morgan')
 const helmet = require('helmet')
 const cors = require('cors')
+// eslint-disable-next-line
 const colors = require('colors')
 const connectDB = require('./config/db')
 
@@ -60,6 +61,7 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT, console.log(`\n *** LISTENING ON PORT ${PORT} ***\n`.yellow.bold))
 
 // Handle unhandled promise rejections
+// eslint-disable-next-line
 process.on('unhandledRejection', (error, promise) => {
   console.log(`Error: ${error.message}`.red);
 });
