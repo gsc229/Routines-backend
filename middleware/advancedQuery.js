@@ -3,11 +3,12 @@ const populateBuilder = require("../helpers/populateQuery");
 const advancedQuery = (model) => async (req, res, next) => {
   //first parameter will be ids for the model to be queried, no need to know exerciseId, routineId etc., just put it in the query object as _id
   if (Object.entries(req.params).length && !req.query._id) {
+    console.log(req.params)
     console.log(Object.entries(req.params));
     req.query._id = Object.entries(req.params)[0][1];
   }
 
-  const reqQuery = { ...req.query };
+  const reqQueryCopy = { ...req.query };
   // remove non-search fields
   const removeFields = [
     "select",
@@ -31,11 +32,12 @@ const advancedQuery = (model) => async (req, res, next) => {
     "select_exercise_sets",
     "select_exercises",
     "select_exercise_sets_exercise",
+    "send_bulkwrite_data" // for updateRoutineDates, updateWeekDates
   ];
 
-  removeFields.forEach((field) => delete reqQuery[field]);
+  removeFields.forEach((field) => delete reqQueryCopy[field]);
 
-  let queryStr = JSON.stringify(reqQuery);
+  let queryStr = JSON.stringify(reqQueryCopy);
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`

@@ -168,6 +168,14 @@ exports.getWeekById = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.editWeek = asyncHandler(async (req, res, next) => {
 
+  /* if(req.body.week_number || req.body.week_start_date){
+    return res.status(400).json({
+      success: false,
+      message: `You cannot edit week_number or week_start_date through PUT routines/weeks/:weekId.
+      Use PUT /routines/weeks/update-week-dates/:weekId`
+    })
+  } */
+
   await Week
   .findByIdAndUpdate(
     req.params.weekId , // id

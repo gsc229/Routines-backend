@@ -45,7 +45,7 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
 
   Weeks.bulkWrite(weekBulkWrites)
   .then(result => bulkWriteResultsData.push({ weeks: result }))
-  .catch(error => res.satus(500).json({ success: false, message: "Something went wrong trying to bulk write weeks.", error }))
+  .catch(error => res.status(500).json({ success: false, message: "Something went wrong trying to bulk write weeks.", error }))
   
   
   /* ========= set_groups =========== */
@@ -74,7 +74,7 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   
   SetGroup.bulkWrite(setGroupBulkWrites)
   .then(result => bulkWriteResultsData.push({ set_groups: result }))
-  .catch(error => res.satus(500).json({ success: false, message: "Something went wrong trying to bulk write set_groups.", error}))
+  .catch(error => res.status(500).json({ success: false, message: "Something went wrong trying to bulk write set_groups.", error}))
   
   /* ========== exercise_sets ============= */
   
@@ -88,9 +88,10 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
 
   ExerciseSet.bulkWrite(exerciseSetBulkWrites)
   .then(result => bulkWriteResultsData.push({ exercise_sets: result }))
-  .catch(error => res.satus(500).json({ success: false, message: "Something went wrong trying to bulk write exercise_sets.", error}))
+  .catch(error => res.status(500).json({ success: false, message: "Something went wrong trying to bulk write exercise_sets.", error}))
 
-  req.body.bulkWriteResultsData = bulkWriteResultsData
+  if(req.query.send_bulkwrite_data) res.bulkWriteResultsData = bulkWriteResultsData
+  
 
   next()
 

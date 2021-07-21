@@ -66,7 +66,7 @@ router
 
   router
   .route('/weeks/update-week-dates/:weekId')
-  .put(updateWeekDates, getUpdatedRoutine)
+  .put(updateWeekDates, advancedQuery(Routine), getUpdatedRoutine)
   
 
 // export router
