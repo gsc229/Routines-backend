@@ -1,8 +1,6 @@
-const Exercise = require('../models/Exercise')
 const Routine = require('../models/Routine')
 const Week = require('../models/RoutineWeek')
 const SetGroup = require('../models/SetGroup')
-const ExerciseSet = require('../models/ExerciseSet')
 const asyncHandler = require("../middleware/asyncHandler")
 
 /* ============================ Set Groups ================================================= */
@@ -13,7 +11,7 @@ const asyncHandler = require("../middleware/asyncHandler")
 // @desc    Create a new set group for a routine (differen from exercise) - required fields: exercise, routine, week and user ids
 // @route   POST /api/v1.0/set-groups
 // @access  Private
-exports.createSetGroup = asyncHandler(async (req, res, next) => {
+exports.createSetGroup = asyncHandler(async (req, res) => {
 
   const {routine, week, week_number, day_number, user} = req.body // day is the only one that's not an _id (UMTWRFS)
 
@@ -50,21 +48,21 @@ exports.createSetGroup = asyncHandler(async (req, res, next) => {
 // @desc    Get all set groups
 // @route   GET /api/v1.0/set-groups
 // @access  Private
-exports.getAllSetGroups = asyncHandler(async (req, res, next) => {
+exports.getAllSetGroups = asyncHandler(async (req, res) => {
   return res.status(200).send(res.advancedResults)
 });
 
 // @desc    Get a set group by ID
 // @route   GET /api/v1.0/set-groups/:setGroupId
 // @access  Private
-exports.getSetGroupById = asyncHandler(async (req, res, next) => {
+exports.getSetGroupById = asyncHandler(async (req, res) => {
   return res.status(200).send(res.advancedResults)
 });
 
 // @desc    Edit an set group
 // @route   PUT /api/v1.0/set-groups/:setGroupId
 // @access  Private
-exports.editSetGroup = asyncHandler(async (req, res, next) => {
+exports.editSetGroup = asyncHandler(async (req, res) => {
 
   await SetGroup
   .findByIdAndUpdate(
@@ -91,7 +89,7 @@ exports.editSetGroup = asyncHandler(async (req, res, next) => {
 // @desc    Update many set groups
 // @route   PUT /api/v1.0/set-groups/update-many
 // @access  Private
-exports.updateManySetGroups = asyncHandler(async (req, res, next) => {
+exports.updateManySetGroups = asyncHandler(async (req, res) => {
   const { query, changes } = req.body // {week: 020wewlk220}, { week_number: 2 }
   console.log("updateMany".america ,{query, changes})
   await SetGroup
@@ -119,7 +117,7 @@ exports.updateManySetGroups = asyncHandler(async (req, res, next) => {
 // @desc    Edit multiple SetGroups by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]
 // @route   PUT /api/v1.0/set-groups/bulk-write
 // @access  Private
-exports.bulkWriteSetGroups = asyncHandler(async(req, res, next) => {
+exports.bulkWriteSetGroups = asyncHandler(async(req, res) => {
   console.log(JSON.stringify(req.body, '', 2).bgRed)
   const {updatesArray, findByObj} = req.body // findBy === {week: weekId} || {routine: rotuineId}
 
@@ -147,7 +145,7 @@ exports.bulkWriteSetGroups = asyncHandler(async(req, res, next) => {
 // @desc    Delete a routine excercises
 // @route   DELTE /api/v1.0/set-groups/:setGroupId
 // @access  Private
-exports.deleteSetGroup = asyncHandler(async (req, res, next) => {
+exports.deleteSetGroup = asyncHandler(async (req, res) => {
   const setGroup = await SetGroup.findById(req.params.setGroupId)
 
   if(!setGroup){
