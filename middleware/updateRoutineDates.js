@@ -2,7 +2,7 @@ const Routine =  require('../models/Routine')
 const Weeks = require('../models/RoutineWeek')
 const SetGroup = require('../models/SetGroup')
 const ExerciseSet = require('../models/ExerciseSet')
-const asyncHandler = require("../middleware/asyncHandler")
+const asyncHandler = require("./asyncHandler")
 const dayjs = require('dayjs')
 //console.log(dayjs('2021-08-22T00:00:00.000Z').diff(dayjs("2021-07-05T00:00:00.000Z"), 'days'))
 

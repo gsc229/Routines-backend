@@ -19,7 +19,7 @@ const RoutineWeek_Schema = new mongoose.Schema({
   week_number: {
     type: Number,
     default: null,
-    //required: [true, "Need a week number"]
+    required: [true, "Need a week number"]
   },
   week_of_year: {
     type: Number,

@@ -1,13 +1,13 @@
 const express = require('express')
-const { updateRoutineDates  } = require('../controllers/updateRoutineDates')
-const { updateWeekDates } = require('../controllers/updateWeekDates')
-const { getUpdatedRoutine } = require('../controllers/getUpdatedRoutine')
+const { updateRoutineDates  } = require('../middleware/updateRoutineDates')
+const { updateWeekDates } = require('../middleware/updateWeekDates')
 // bring in controllers
 const {
   createRoutine,
   getAllRoutines,
   getRoutineById,
   getFlattenedRoutine,
+  getUpdatedRoutine,
   editRoutine,
   deleteRoutine,
   createWeek,
@@ -15,7 +15,7 @@ const {
   getWeekById,
   editWeek,
   bulkWriteWeeks,
-  deleteWeek
+  deleteWeek,
 } = require('../controllers/routines')
 /* '/api/v1.0/routines' */
 const Routine = require('../models/Routine')

@@ -2,9 +2,9 @@ const Routine = require("../models/Routine");
 const Week = require("../models/RoutineWeek");
 const SetGroup = require("../models/SetGroup");
 const ExerciseSet = require("../models/ExerciseSet");
-const asyncHandler = require("../middleware/asyncHandler");
+const asyncHandler = require("./asyncHandler");
 const dayjs = require("dayjs");
-console.log(dayjs('2021-07-03T00:00:00.000Z').diff(dayjs("2021-06-27T00:00:00.000Z"), 'days'))
+
 //console.log(`${Number.isNaN(parseInt("pie"))}`.red)
 /* @desc
 In the body of the request provide week_number
