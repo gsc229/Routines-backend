@@ -36,7 +36,6 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     .populate("set_groups")
     .populate("exercise_sets");
 
-
   /* ======================== Copy Routine (top-level info) =================== */
 
   const routineInfoCopy = {
@@ -66,7 +65,7 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     });
 
   // attach routineId to req.body for the next middlware upDateRoutineDates:
-  req.body.routineId = NewRoutine._id
+  req.body.routineId = NewRoutine._id;
 
   const bulkWriteResultsData = [];
 
@@ -113,8 +112,6 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       success: false,
       message: `Error bulkwriting new weeks from new routine with id: ${NewRoutine._id}`,
     });
-  
-  
 
   const oldToNewWeekIds = {};
   NewWeeks.forEach((week) => (oldToNewWeekIds[week.copied_from] = week.id));

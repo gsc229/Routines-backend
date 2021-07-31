@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require("express");
 //  /api/v1.0/set-groups
 
 // bring in controllers
@@ -9,37 +9,31 @@ const {
   editSetGroup,
   updateManySetGroups,
   deleteSetGroup,
-  bulkWriteSetGroups
-} = require('../controllers/set_groups')
+  bulkWriteSetGroups,
+} = require("../controllers/set_groups");
 // bring in models/schemas
-const SetGroup = require('../models/SetGroup')
+const SetGroup = require("../models/SetGroup");
 
 // bring in middlware variables
-const advancedQuery = require('../middleware/advancedQuery')
+const advancedQuery = require("../middleware/advancedQuery");
 
 // create router
-const router = express.Router()
+const router = express.Router();
 
 // routes
 router
-  .route('/')
+  .route("/")
   .post(createSetGroup)
-  .get(advancedQuery(SetGroup), getAllSetGroups)
-router
-.route('/update-many')
-.put(updateManySetGroups)
+  .get(advancedQuery(SetGroup), getAllSetGroups);
+router.route("/update-many").put(updateManySetGroups);
+
+router.route("/bulk-write").put(bulkWriteSetGroups);
 
 router
-  .route('/bulk-write')
-  .put(bulkWriteSetGroups)
-  
-router
-  .route('/:setGroupId')
+  .route("/:setGroupId")
   .get(advancedQuery(SetGroup), getSetGroupById)
   .put(editSetGroup)
-  .delete(deleteSetGroup)
-
-
+  .delete(deleteSetGroup);
 
 // export router
-module.exports = router
+module.exports = router;

@@ -15,7 +15,7 @@
     "excercise": "20923elkwdslk2q",
     "routine": "1324230abc",
     "user": "982ujwsois",
-    "reps":10,
+    "reps": 10,
     "sets": 4,
     "date": "5/4/2020"
   },
@@ -42,7 +42,7 @@
     "week": "1312432",
     "week_no": 1,
     "dayOfWeek": "monday",
-    "excercises": [{"exercise": "20923elkwdslk2q", "sets": 4, "reps": 10}]
+    "excercises": [{ "exercise": "20923elkwdslk2q", "sets": 4, "reps": 10 }]
   },
   "routine_week": {
     "id": "1312432",
@@ -59,6 +59,4 @@
     "weeks": [],
     "difficulty": "Medium"
   }
-  
 }
-

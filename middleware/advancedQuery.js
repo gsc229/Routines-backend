@@ -1,9 +1,8 @@
 const populateBuilder = require("../helpers/populateQuery");
-const advancedQueryBypass = require("../helpers/advancedQueryBypass")
+const advancedQueryBypass = require("../helpers/advancedQueryBypass");
 
 const advancedQuery = (model) => async (req, res, next) => {
-  
-  //first parameter will be ids for the model to be queried, no need to know exerciseId, routineId etc., 
+  //first parameter will be ids for the model to be queried, no need to know exerciseId, routineId etc.,
   // just put it in the query object as _id
   if (Object.entries(req.params).length && !req.query._id) {
     // doing it like this to be dynamic. There are many param id types, i.e. routineId, weekId etc.
@@ -34,7 +33,7 @@ const advancedQuery = (model) => async (req, res, next) => {
     "select_exercise_sets",
     "select_exercises",
     "select_exercise_sets_exercise",
-    "send_bulkwrite_data" // for updateRoutineDates, updateWeekDates
+    "send_bulkwrite_data", // for updateRoutineDates, updateWeekDates
   ];
 
   removeFields.forEach((field) => delete reqQueryCopy[field]);
@@ -44,18 +43,17 @@ const advancedQuery = (model) => async (req, res, next) => {
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
-  
-  queryStr = JSON.parse(queryStr)
+
+  queryStr = JSON.parse(queryStr);
 
   let query = model.find(queryStr);
   /* ^^^^^^^^^^^^^^^^^ BASIC QUERY ^^^^^^^^^^^^^^^^^^^^^^^ */
-  delete req.query._id
-  // if the only query/param field provided was the resource's id, then bypass the rest of 
+  delete req.query._id;
+  // if the only query/param field provided was the resource's id, then bypass the rest of
   // advance results
-  if(Object.keys(req.query).length === 0){
-    advancedQueryBypass(query, res, next)
+  if (Object.keys(req.query).length === 0) {
+    advancedQueryBypass(query, res, next);
   }
-
 
   if (req.query.select) {
     const fields = req.query.select.split(",").join(" ");
@@ -198,6 +196,6 @@ const advancedQuery = (model) => async (req, res, next) => {
       error_message: "Your request could not be processed.",
     });
   });
-};/* END */
+}; /* END */
 
 module.exports = advancedQuery;

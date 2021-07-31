@@ -1,5 +1,4 @@
 const advancedQueryBypass = (query, res, next) => {
-  
   query.exec((err, results) => {
     if (err) {
       return res.status(400).send({
@@ -19,7 +18,7 @@ const advancedQueryBypass = (query, res, next) => {
         kb,
         mb,
         data: results,
-      }
+      };
       return next();
     }
 
@@ -28,7 +27,6 @@ const advancedQueryBypass = (query, res, next) => {
       error_message: "Your request could not be processed.",
     });
   });
+};
 
-}
-
-module.exports = advancedQueryBypass
+module.exports = advancedQueryBypass;
