@@ -3,9 +3,10 @@ const Week = require("../models/RoutineWeek");
 const SetGroup = require("../models/SetGroup");
 const ExerciseSet = require("../models/ExerciseSet");
 const asyncHandler = require("./asyncHandler");
+const dayjs = require("dayjs");
 
 exports.validateCopyRoutineBody = asyncHandler(async (req, res, next) => {
-  const template_id = req.template_id;
+  const template_id = req.body.template_id;
   const user = req.body.user;
   const start_date = req.body.start_date;
 
@@ -25,21 +26,29 @@ exports.validateCopyRoutineBody = asyncHandler(async (req, res, next) => {
       message: "You did not include a start_date in the request body",
     });
 
+  if (!dayjs(start_date).isValid())
+    res.status(400).json({
+      success: false,
+      message: `${start_date} is not a valid start_date`,
+    });
+
   next();
 });
 
 exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
   const { template_id, user, start_date } = req.body;
 
-  const RoutineTemplate = await Routine.findById(template_id)
-    .populate("weeks")
-    .populate("set_groups")
-    .populate("exercise_sets");
+  let RoutineTemplate = await Routine.findById(template_id);
+
+  if (!RoutineTemplate)
+    return res.status(500).json({
+      success: false,
+      message: `There's no routine template with id of ${template_id}`,
+    });
 
   /* ======================== Copy Routine (top-level info) =================== */
-
   const routineInfoCopy = {
-    ...RoutineTemplate,
+    ...RoutineTemplate.toObject(),
     is_template: false,
     template_id,
     copied_from: template_id,
@@ -51,168 +60,208 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
   delete routineInfoCopy.id;
   delete routineInfoCopy.createdAt;
   delete routineInfoCopy.updatedAt;
-  delete routineInfoCopy.weeks;
-  delete routineInfoCopy.set_groups;
-  delete routineInfoCopy.exercise_sets;
   delete routineInfoCopy.__v;
 
-  const NewRoutine = await new Routine(routineInfoCopy).save();
+  let NewRoutine = await new Routine(routineInfoCopy).save();
 
   if (!NewRoutine)
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: `Something went wrong creating routine from template_id: ${template_id}`,
     });
 
-  // attach routineId to req.body for the next middlware upDateRoutineDates:
-  req.body.routineId = NewRoutine._id;
+  NewRoutine = NewRoutine.toObject();
+  
 
+  // attach routineId to req.body for the next middlware upDateRoutineDates:
+  req.body.routineId = NewRoutine.id;
+  // collect all the bulkwrite results from weeks, set_groups and exercise_sets
   const bulkWriteResultsData = [];
 
   /* ============ Copy Weeks ================================ */
+  const RoutineTemplateWeeks = await Week.find({ routine: template_id });
+
   const weekBulkWrites = [];
 
-  RoutineTemplate.weeks.forEach((week) => {
-    const { id } = week;
+  RoutineTemplateWeeks.forEach((oldWeek) => {
+    oldWeek = oldWeek.toObject();
+    const newWeek = {
+      ...oldWeek,
+      week_number: parseInt(oldWeek.week_number),
+      copied_from: oldWeek._id,
+      user,
+      routine: NewRoutine._id,
+    };
 
-    const week_number = parseInt(week.week_number);
-    delete week._id;
-    delete week.id;
-    delete week.createdAt;
-    delete week.updatedAt;
-    delete week.__v;
+    delete newWeek._id;
+    delete newWeek.id;
+    delete newWeek.createdAt;
+    delete newWeek.updatedAt;
+    delete newWeek.__v;
 
-    if (Number.isNaN(week_number) !== true && week_number > 0) {
+    if (Number.isNaN(newWeek.week_number) !== true && newWeek.week_number > 0) {
       weekBulkWrites.push({
         insertOne: {
-          document: {
-            ...week,
-            routine: NewRoutine._id,
-            copied_from: id,
-          },
+          document: newWeek,
         },
       });
     }
   });
+  
+  const oldToNewWeekIds = {};
 
-  Week.bulkWrite(weekBulkWrites)
-    .then((result) => bulkWriteResultsData.push({ weeks: result }))
-    .catch((error) =>
-      res.status(500).json({
+  if (weekBulkWrites.length) {
+    await Week.bulkWrite(weekBulkWrites)
+      .then((result) => bulkWriteResultsData.push({ weeks: result }))
+      .catch((error) => {
+        return res.status(500).json({
+          success: false,
+          message: `Something went wrong trying to bulk write weeks for routine id: ${NewRoutine._id}`,
+          error,
+        });
+      });
+
+    const NewWeeks = await Week.find({ routine: NewRoutine._id });
+
+    
+
+    if (!NewWeeks.length)
+      return res.status(500).json({
         success: false,
-        message: `Something went wrong trying to bulk write weeks for routine id: ${NewRoutine._id}`,
-        error,
-      })
-    );
+        message: `Error bulkwriting new weeks from new routine with id: ${NewRoutine._id}`,
+      });
 
-  const NewWeeks = await Week.find({ routine: NewRoutine._id });
-
-  if (!NewWeeks)
-    res.status(500).json({
-      success: false,
-      message: `Error bulkwriting new weeks from new routine with id: ${NewRoutine._id}`,
+    NewWeeks.forEach((new_week) => {
+      new_week = new_week.toObject();
+      oldToNewWeekIds[new_week.copied_from] = new_week._id;
     });
 
-  const oldToNewWeekIds = {};
-  NewWeeks.forEach((week) => (oldToNewWeekIds[week.copied_from] = week.id));
+    
+  }
 
   /* ============ Copy Set Groups ========================== */
+  const RoutineTemplateSetGroups = await SetGroup.find({
+    routine: template_id,
+  });
   const setGroupBulkWrites = [];
 
-  RoutineTemplate.set_groups.forEach((set_group) => {
-    const { id, week } = set_group; // week = the _id of the week to which the set_group belongs
-    const day_number = parseInt(set_group.day_number);
-    const week_number = parseInt(set_group.week_number);
+  RoutineTemplateSetGroups.forEach((oldSetGroup) => {
+    oldSetGroup = oldSetGroup.toObject();
+    const newSetGroup = {
+      ...oldSetGroup,
+      user,
+      week: oldToNewWeekIds[oldSetGroup.week],
+      routine: NewRoutine._id,
+      day_number: parseInt(oldSetGroup.day_number),
+      week_number: parseInt(oldSetGroup.week_number),
+      copied_from: oldSetGroup._id,
+    }; // week = the _id of the week to which the set_group belongs
 
-    delete set_group._id;
-    delete set_group.id;
-    delete set_group.createdAt;
-    delete set_group.updatedAt;
-    delete set_group.__v;
+    delete newSetGroup._id;
+    delete newSetGroup.id;
+    delete newSetGroup.createdAt;
+    delete newSetGroup.updatedAt;
+    delete newSetGroup.__v;
 
     if (
-      Number.isNaN(week_number) !== true &&
-      Number.isNaN(day_number) !== true &&
-      day_number > 0
+      Number.isNaN(newSetGroup.week_number) !== true &&
+      Number.isNaN(newSetGroup.day_number) !== true &&
+      newSetGroup.day_number > 0 && 
+      newSetGroup.week
     ) {
       setGroupBulkWrites.push({
         insertOne: {
-          document: {
-            ...set_group,
-            routine: NewRoutine._id,
-            week: oldToNewWeekIds[week],
-            copied_from: id,
-          },
+          document: newSetGroup,
         },
       });
     }
   });
-
-  SetGroup.bulkWrite(setGroupBulkWrites)
-    .then((result) => bulkWriteResultsData.push({ set_groups: result }))
-    .catch((error) =>
-      res.status(500).json({
-        success: false,
-        message: `Something went wrong trying to bulk write set_groups for routine id: ${NewRoutine._id}`,
-        error,
-      })
-    );
-
-  const NewSetGroups = await SetGroup.find({ routine: NewRoutine._id });
-
-  if (!NewSetGroups)
-    res.status(500).json({
-      success: false,
-      message: `Error bulkwriting new set_groups for new routine with id: ${NewRoutine._id}`,
-    });
-
+  
   const oldToNewSetGroupIds = {};
-  NewSetGroups.forEach(
-    (set_group) => (oldToNewSetGroupIds[set_group.copied_from] = set_group.id)
-  );
+
+  if (setGroupBulkWrites.length) {
+    await SetGroup.bulkWrite(setGroupBulkWrites)
+      .then((result) => bulkWriteResultsData.push({ set_groups: result }))
+      .catch((error) => {
+        return res.status(500).json({
+          success: false,
+          message: `Something went wrong trying to bulk write set_groups for routine id: ${NewRoutine._id}`,
+          error,
+        });
+      });
+
+    const NewSetGroups = await SetGroup.find({ routine: NewRoutine._id });
+    
+    if (!NewSetGroups.length)
+      return res.status(500).json({
+        success: false,
+        message: `Error bulkwriting new set_groups for new routine with id: ${NewRoutine._id}`,
+      });
+
+    NewSetGroups.forEach((new_set_group) => {
+      new_set_group = new_set_group.toObject();
+      oldToNewSetGroupIds[new_set_group.copied_from] = new_set_group._id;
+    });
+  }
 
   /* ============== Copy Exercise Sets ============================ */
+  const RoutineTemplateExerciseSets = await ExerciseSet.find({
+    routine: template_id,
+  });
+
   const exerciseSetsBulkWrites = [];
 
-  RoutineTemplate.exercise_sets.forEach((exercise_set) => {
-    const { id, week, set_group } = exercise_set; // week/set_group = the _id of the week/set_group to which the exercise_set belongs
-    const day_number = parseInt(exercise_set.day_number);
-    const week_number = parseInt(exercise_set.week_number);
+  RoutineTemplateExerciseSets.forEach((oldExerciseSet) => {
+    oldExerciseSet = oldExerciseSet.toObject();
+    const newExerciseSet = {
+      ...oldExerciseSet,
+      day_number: parseInt(oldExerciseSet.day_number),
+      week_number: parseInt(oldExerciseSet.week_number),
+      user,
+      routine: NewRoutine._id,
+      week: oldToNewWeekIds[oldExerciseSet.week], // week/set_group = the _id of the week/set_group to which the oldExerciseSet belongs
+      set_group: oldToNewSetGroupIds[oldExerciseSet.set_group],
+      copied_from: oldExerciseSet._id,
+    };
 
-    delete exercise_set._id;
-    delete exercise_set.id;
-    delete exercise_set.createdAt;
-    delete exercise_set.updatedAt;
-    delete exercise_set.__v;
+    delete newExerciseSet._id;
+    delete newExerciseSet.id;
+    delete newExerciseSet.createdAt;
+    delete newExerciseSet.updatedAt;
+    delete newExerciseSet.__v;
 
     if (
-      Number.isNaN(week_number) !== true &&
-      Number.isNaN(day_number) !== true &&
-      day_number > 0
+      Number.isNaN(newExerciseSet.week_number) !== true &&
+      Number.isNaN(newExerciseSet.day_number) !== true &&
+      newExerciseSet.day_number > 0 &&
+      newExerciseSet.week &&
+      newExerciseSet.set_group
     ) {
       exerciseSetsBulkWrites.push({
         insertOne: {
-          document: {
-            ...exercise_set,
-            routine: NewRoutine._id,
-            week: oldToNewWeekIds[week],
-            set_group: oldToNewSetGroupIds[set_group],
-            copied_from: id,
-          },
+          document: newExerciseSet,
         },
       });
     }
   });
 
-  ExerciseSet.bulkWrite(exerciseSetsBulkWrites)
-    .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
-    .catch((error) =>
-      res.status(500).json({
-        success: false,
-        message: `Something went wrong trying to bulk write exercise_sets for routine id: ${NewRoutine._id}`,
-        error,
-      })
-    );
+  if (exerciseSetsBulkWrites.length) {
+    
+    await ExerciseSet.bulkWrite(exerciseSetsBulkWrites)
+      .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
+      .catch((error) => {
+        return res.status(500).json({
+          success: false,
+          message: `Something went wrong trying to bulk write exercise_sets for routine id: ${NewRoutine._id}`,
+          error,
+        });
+      });
+
+    if (req.query.send_bulkwrite_data) {
+      delete req.query.send_bulkwrite_data;
+      res.bulkWriteResultsData = bulkWriteResultsData;
+    }
+  }
 
   next();
 }); /* END */

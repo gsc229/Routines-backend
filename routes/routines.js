@@ -50,7 +50,7 @@ router
   .put(updateRoutineDates, advancedQuery(Routine), getUpdatedRoutine);
 
 router
-  .route("/routine-from-template")
+  .route("/copy-from-template")
   .post(
     validateCopyRoutineBody,
     copyRoutineTemplate,

@@ -33,7 +33,7 @@ const advancedQuery = (model) => async (req, res, next) => {
     "select_exercise_sets",
     "select_exercises",
     "select_exercise_sets_exercise",
-    "send_bulkwrite_data", // for updateRoutineDates, updateWeekDates
+    "send_bulkwrite_data", // for updateRoutineDates, updateWeekDates, and copyRoutineFromTemplate
   ];
 
   removeFields.forEach((field) => delete reqQueryCopy[field]);
@@ -74,7 +74,7 @@ const advancedQuery = (model) => async (req, res, next) => {
         : "",
     });
   }
-
+  console.log(query.lean())
   if (req.query.populate_set_groups) {
     query = query.populate({
       path: "set_groups",

@@ -152,7 +152,7 @@ exports.deleteRoutine = asyncHandler(async (req, res) => {
 exports.getUpdatedRoutine = asyncHandler(async (req, res) => {
   const bulkWriteResultsData = res.bulkWriteResultsData;
 
-  if (req.body.bulkWriteResultsData) {
+  if (bulkWriteResultsData) {
     return res
       .status(200)
       .json({ ...res.advancedResults, bulkWriteResultsData });

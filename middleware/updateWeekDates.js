@@ -181,8 +181,10 @@ exports.updateWeekDates = asyncHandler(async (req, res, next) => {
       })
     );
 
-  if (req.query.send_bulkwrite_data)
+  if (req.query.send_bulkwrite_data) {
+    delete req.query.send_bulkwrite_data;
     res.bulkWriteResultsData = bulkWriteResultsData;
+  }
 
   next();
 });

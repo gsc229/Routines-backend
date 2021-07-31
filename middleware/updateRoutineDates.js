@@ -11,28 +11,37 @@ const dayjs = require("dayjs");
 // @route   PUT /api/v1.0/update-routine-start-date/routineId
 // @access  Private
 exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
-  const routineId = req.params.routineId;
+  const routineId = req.params.routineId
+    ? req.params.routineId
+    : req.body.routineId;
+
+  if (!routineId) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message:
+          "You must supply a routineId in either the request parameters, or the request body",
+      });
+  }
 
   if (!req.body.start_date)
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "You did not provide a new start_date.",
-      });
-  if (!dayjs(req.body.start_date).isValid())
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: `${req.body.start_date} is not a valid start date`,
-      });
+    return res.status(400).json({
+      success: false,
+      message: "You did not provide a new start_date.",
+    });
 
-  const newStartDate = dayjs(req.body.start_date);
+  if (!dayjs(req.body.start_date).isValid())
+    return res.status(400).json({
+      success: false,
+      message: `${req.body.start_date} is not a valid start date`,
+    });
+
+  const newStartDate = dayjs(req.body.start_date).startOf("day");
 
   const routine = await Routine.findByIdAndUpdate(
     routineId,
-    { start_date: newStartDate.toISOString() },
+    { start_date: newStartDate.toDate() },
     { new: true }
   )
     .populate("weeks")
@@ -56,6 +65,7 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
     if (Number.isNaN(week_number) !== true && week_number > 0) {
       const week_start_date = newStartDate
         .add(week_number - 1, "week")
+        .startOf("day")
         .toISOString();
       weekBulkWrites.push({
         updateOne: { filter: { _id }, update: { week_start_date } },
@@ -67,13 +77,11 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   Weeks.bulkWrite(weekBulkWrites)
     .then((result) => bulkWriteResultsData.push({ weeks: result }))
     .catch((error) =>
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Something went wrong trying to bulk write weeks.",
-          error,
-        })
+      res.status(500).json({
+        success: false,
+        message: "Something went wrong trying to bulk write weeks.",
+        error,
+      })
     );
 
   /* ========= set_groups =========== */
@@ -84,17 +92,18 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
     const { _id, week } = set_group; // week = the _id of the week to which the set_group belongs
     const day_number = parseInt(set_group.day_number);
     const week_number = parseInt(set_group.week_number);
-
+    
     if (
       Number.isNaN(week_number) !== true &&
       Number.isNaN(day_number) !== true &&
-      day_number > 0
+      day_number > 0 &&
+      weekIdToNumberAndStartDate[week]
     ) {
       const update = {};
       update["scheduled_date"] = dayjs(
         weekIdToNumberAndStartDate[week]["week_start_date"]
-      )
-        .add(day_number - 1, "day")
+      ) .startOf('day')
+        .add(day_number, "day")
         .toISOString();
       if (weekIdToNumberAndStartDate[week]["week_number"] !== week_number) {
         update["week_number"] = weekIdToNumberAndStartDate[week]["week_number"];
@@ -109,13 +118,11 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   SetGroup.bulkWrite(setGroupBulkWrites)
     .then((result) => bulkWriteResultsData.push({ set_groups: result }))
     .catch((error) =>
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Something went wrong trying to bulk write set_groups.",
-          error,
-        })
+      res.status(500).json({
+        success: false,
+        message: "Something went wrong trying to bulk write set_groups.",
+        error,
+      })
     );
 
   /* ========== exercise_sets ============= */
@@ -136,17 +143,17 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
   ExerciseSet.bulkWrite(exerciseSetBulkWrites)
     .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
     .catch((error) =>
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Something went wrong trying to bulk write exercise_sets.",
-          error,
-        })
+      res.status(500).json({
+        success: false,
+        message: "Something went wrong trying to bulk write exercise_sets.",
+        error,
+      })
     );
 
-  if (req.query.send_bulkwrite_data)
+  if (req.query.send_bulkwrite_data) {
+    delete req.query.send_bulkwrite_data;
     res.bulkWriteResultsData = bulkWriteResultsData;
+  }
 
   next();
 });
