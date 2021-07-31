@@ -1,6 +1,7 @@
 const express = require('express')
 const { updateRoutineDates  } = require('../middleware/updateRoutineDates')
 const { updateWeekDates } = require('../middleware/updateWeekDates')
+const { validateCopyRoutineBody, copyRoutineTemplate } = require('../middleware/copyRoutineTemplate')
 // bring in controllers
 const {
   createRoutine,
@@ -46,6 +47,10 @@ router
 router
 .route('/update-routine-dates/:routineId')
 .put(updateRoutineDates, advancedQuery(Routine), getUpdatedRoutine)
+
+router
+.route('/copy-routine-from-template')
+.post(validateCopyRoutineBody, copyRoutineTemplate, updateRoutineDates)
 
 
 /* ============= Week Routes ================= */

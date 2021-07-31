@@ -99,36 +99,3 @@ exports.updateRoutineDates = asyncHandler(async (req, res, next) => {
 });
 
 
-/* 
-Character.bulkWrite([
-  {
-    insertOne: {
-      document: {
-        name: 'Eddard Stark',
-        title: 'Warden of the North'
-      }
-    }
-  },
-  {
-    updateOne: {
-      filter: { name: 'Eddard Stark' },
-      // If you were using the MongoDB driver directly, you'd need to do
-      // `update: { $set: { title: ... } }` but mongoose adds $set for
-      // you.
-      update: { title: 'Hand of the King' }
-    }
-  },
-  {
-    deleteOne: {
-      {
-        filter: { name: 'Eddard Stark' }
-      }
-    }
-  }
-]).then(res => {
- // Prints "1 1 1"
- console.log(res.insertedCount, res.modifiedCount, res.deletedCount);
-});
-
-
-*/

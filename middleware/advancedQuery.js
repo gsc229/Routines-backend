@@ -1,10 +1,12 @@
 const populateBuilder = require("../helpers/populateQuery");
+const advancedQueryBypass = require("../helpers/advancedQueryBypass")
 
 const advancedQuery = (model) => async (req, res, next) => {
-  //first parameter will be ids for the model to be queried, no need to know exerciseId, routineId etc., just put it in the query object as _id
+  
+  //first parameter will be ids for the model to be queried, no need to know exerciseId, routineId etc., 
+  // just put it in the query object as _id
   if (Object.entries(req.params).length && !req.query._id) {
-    console.log(req.params)
-    console.log(Object.entries(req.params));
+    // doing it like this to be dynamic. There are many param id types, i.e. routineId, weekId etc.
     req.query._id = Object.entries(req.params)[0][1];
   }
 
@@ -42,9 +44,18 @@ const advancedQuery = (model) => async (req, res, next) => {
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
+  
+  queryStr = JSON.parse(queryStr)
 
-  let query = model.find(JSON.parse(queryStr));
+  let query = model.find(queryStr);
   /* ^^^^^^^^^^^^^^^^^ BASIC QUERY ^^^^^^^^^^^^^^^^^^^^^^^ */
+  delete req.query._id
+  // if the only query/param field provided was the resource's id, then bypass the rest of 
+  // advance results
+  if(Object.keys(req.query).length === 0){
+    advancedQueryBypass(query, res, next)
+  }
+
 
   if (req.query.select) {
     const fields = req.query.select.split(",").join(" ");
@@ -56,7 +67,7 @@ const advancedQuery = (model) => async (req, res, next) => {
 
   if (nestedPopulate) query = query.populate(nestedPopulate);
 
-  // first level populates and selects
+  // first-level (flat) populates and selects
   if (req.query.populate_weeks) {
     query = query.populate({
       path: "weeks",
@@ -187,6 +198,6 @@ const advancedQuery = (model) => async (req, res, next) => {
       error_message: "Your request could not be processed.",
     });
   });
-};
+};/* END */
 
 module.exports = advancedQuery;

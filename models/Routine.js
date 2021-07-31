@@ -10,6 +10,19 @@ const Routine_Schema = new mongoose.Schema({
       type: Date,
       default: null
     },
+    is_template: {
+      type: Boolean,
+      default: false
+    },
+    template_id: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Routine',
+      default: null
+    },
+    public: {
+      type: Boolean,
+      default: false
+    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: 'User',  
@@ -82,7 +95,7 @@ const Routine_Schema = new mongoose.Schema({
 /* ================ DELETE Cascading ======================= */
 Routine_Schema.pre('deleteOne', {document:true, query: false}, async function(next){
   console.log(`DELETE Routine cascade RoutineWeek, SetGroup, ExerciseSet`)
-  console.log({this: this, thisDotId: this._id})
+  console.log({this: this, this_id: this._id})
 
   await this.model('RoutineWeek').deleteMany({
     routine: this._id
