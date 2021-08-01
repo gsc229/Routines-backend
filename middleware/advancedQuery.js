@@ -27,7 +27,7 @@ const advancedQuery = (model) => async (req, res, next) => {
   /* ^^^^^^^^^^^^^^^^^ BASIC QUERY ^^^^^^^^^^^^^^^^^^^^^^^ */
   delete req.query._id;
   // if the only query/param field provided was the resource's id, then bypass the rest of advancedQuery
-  // note: req.query.resourceId becomes req.query._id (see notes above)
+  // note: req.param.resourceId becomes req.query._id (see notes above)
   if (Object.keys(req.query).length === 0) {
     advancedQueryBypass(query, res, next);
   }
