@@ -101,7 +101,8 @@ const advancedQuery = (model) => async (req, res, next) => {
         err_name: err.name,
       });
     }
-
+    // the results are attached to the response and passed on to the appropriate resource controller 
+    //which forwards the response to the client. (see the routes file of a given resource to see the response flow)
     if (results) {
       const size = new TextEncoder().encode(JSON.stringify(results)).length;
       const kb = (size / 1025).toFixed(2);
