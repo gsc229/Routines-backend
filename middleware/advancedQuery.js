@@ -28,11 +28,18 @@ const advancedQuery = (model) => async (req, res, next) => {
     "populate_exercise_sets",
     "populate_exercises",
     "populate_exercise_sets_exercise",
+    "populate_week",
+    "populate_set_group",
+    "populate_exercise",
     "select_weeks",
     "select_set_groups",
     "select_exercise_sets",
     "select_exercises",
     "select_exercise_sets_exercise",
+    "select_exercise",
+    "select_set_group",
+    "select_exercise",
+    "select_week",
     "send_bulkwrite_data", // for updateRoutineDates, updateWeekDates, and copyRoutineFromTemplate
   ];
 
@@ -62,9 +69,9 @@ const advancedQuery = (model) => async (req, res, next) => {
 
   // nested populate
   let nestedPopulate = populateBuilder(req.query);
-
   if (nestedPopulate) query = query.populate(nestedPopulate);
-
+  //console.log({ nestedPopulate });
+  // first-level populates
   // first-level (flat) populates and selects
   if (req.query.populate_weeks) {
     query = query.populate({
@@ -74,7 +81,7 @@ const advancedQuery = (model) => async (req, res, next) => {
         : "",
     });
   }
-  console.log(query.lean())
+
   if (req.query.populate_set_groups) {
     query = query.populate({
       path: "set_groups",
@@ -119,6 +126,44 @@ const advancedQuery = (model) => async (req, res, next) => {
     });
   }
 
+  if (req.query.populate_exercise) {
+    query = query.populate({
+      path: "exercise",
+      select: req.query.select_exercise
+        ? req.query.select_exercise.split(",").join(" ")
+        : "",
+    });
+  }
+
+  if (req.query.populate_week) {
+    query = query.populate({
+      path: "week",
+      select: req.query.select_week
+        ? req.query.select_week.split(",").join(" ")
+        : "",
+    });
+  }
+
+  if (req.query.populate_set_group) {
+    query = query.populate({
+      path: "set_group",
+      select: req.query.select_set_group
+        ? req.query.select_set_group.split(",").join(" ")
+        : ""
+    });
+  }
+
+  if (req.query.populate_routine) {
+    query = query.populate({
+      path: "routine",
+      select: req.query.select_routine
+        ? req.query.select_routine.split(",").join(" ")
+        : "",
+    });
+  }
+
+
+  // sort
   if (req.query.sort) {
     let sortBy = req.query.sort;
     query = query.sort(sortBy);

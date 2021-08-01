@@ -1,4 +1,5 @@
 const advancedQueryBypass = (query, res, next) => {
+  console.log("BYPASS QUERY MIDDLEWARE".red)
   query.exec((err, results) => {
     if (err) {
       return res.status(400).send({

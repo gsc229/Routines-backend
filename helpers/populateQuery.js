@@ -14,11 +14,12 @@ const populateQuery = (reqDotQuery) => {
   if (!populate_one) return "";
 
   const populate = {};
-
+  
   populate.path = populate_one ? populate_one : ""; // weeks
   select_one ? (select_one = select_one.split(",").join(" ")) : "";
   populate.select = select_one ? select_one : "";
-
+  
+  
   if (!populate_two) return populate;
 
   populate.populate = {};
