@@ -71,7 +71,6 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     });
 
   NewRoutine = NewRoutine.toObject();
-  
 
   // attach routineId to req.body for the next middlware upDateRoutineDates:
   req.body.routineId = NewRoutine.id;
@@ -107,7 +106,7 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       });
     }
   });
-  
+
   const oldToNewWeekIds = {};
 
   if (weekBulkWrites.length) {
@@ -123,8 +122,6 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
 
     const NewWeeks = await Week.find({ routine: NewRoutine._id });
 
-    
-
     if (!NewWeeks.length)
       return res.status(500).json({
         success: false,
@@ -135,8 +132,6 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       new_week = new_week.toObject();
       oldToNewWeekIds[new_week.copied_from] = new_week._id;
     });
-
-    
   }
 
   /* ============ Copy Set Groups ========================== */
@@ -166,7 +161,7 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     if (
       Number.isNaN(newSetGroup.week_number) !== true &&
       Number.isNaN(newSetGroup.day_number) !== true &&
-      newSetGroup.day_number > 0 && 
+      newSetGroup.day_number > 0 &&
       newSetGroup.week
     ) {
       setGroupBulkWrites.push({
@@ -176,8 +171,8 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       });
     }
   });
-  
-  const oldToNewSetGroupIds = {};
+
+  const oldToNewSetGroupAndWeekIds = {};
 
   if (setGroupBulkWrites.length) {
     await SetGroup.bulkWrite(setGroupBulkWrites)
@@ -191,7 +186,7 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       });
 
     const NewSetGroups = await SetGroup.find({ routine: NewRoutine._id });
-    
+
     if (!NewSetGroups.length)
       return res.status(500).json({
         success: false,
@@ -200,7 +195,10 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
 
     NewSetGroups.forEach((new_set_group) => {
       new_set_group = new_set_group.toObject();
-      oldToNewSetGroupIds[new_set_group.copied_from] = new_set_group._id;
+      oldToNewSetGroupAndWeekIds[new_set_group.copied_from] = {
+        set_group: new_set_group._id,
+        week: new_set_group.week,
+      };
     });
   }
 
@@ -213,14 +211,20 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
 
   RoutineTemplateExerciseSets.forEach((oldExerciseSet) => {
     oldExerciseSet = oldExerciseSet.toObject();
+
+    const week = oldToNewSetGroupAndWeekIds[oldExerciseSet.set_group]
+      ? oldToNewSetGroupAndWeekIds[oldExerciseSet.set_group]["week"]
+      : "";
+    const set_group = oldToNewSetGroupAndWeekIds[oldExerciseSet.set_group]
+      ? oldToNewSetGroupAndWeekIds[oldExerciseSet.set_group]["set_group"]
+      : "";
+
     const newExerciseSet = {
       ...oldExerciseSet,
-      day_number: parseInt(oldExerciseSet.day_number),
-      week_number: parseInt(oldExerciseSet.week_number),
       user,
       routine: NewRoutine._id,
-      week: oldToNewWeekIds[oldExerciseSet.week], // week/set_group = the _id of the week/set_group to which the oldExerciseSet belongs
-      set_group: oldToNewSetGroupIds[oldExerciseSet.set_group],
+      week, // week/set_group = the _id of the week/set_group to which the oldExerciseSet belongs
+      set_group,
       copied_from: oldExerciseSet._id,
     };
 
@@ -231,9 +235,6 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     delete newExerciseSet.__v;
 
     if (
-      Number.isNaN(newExerciseSet.week_number) !== true &&
-      Number.isNaN(newExerciseSet.day_number) !== true &&
-      newExerciseSet.day_number > 0 &&
       newExerciseSet.week &&
       newExerciseSet.set_group
     ) {
@@ -244,9 +245,12 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       });
     }
   });
+  console.log(
+    JSON.stringify({ exerciseSetsBulkWrites }, null, 2).bgBlue.yellow
+  );
+  console.log(JSON.stringify({ oldToNewSetGroupAndWeekIds }, null, 2).bgRed.yellow);
 
   if (exerciseSetsBulkWrites.length) {
-    
     await ExerciseSet.bulkWrite(exerciseSetsBulkWrites)
       .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
       .catch((error) => {

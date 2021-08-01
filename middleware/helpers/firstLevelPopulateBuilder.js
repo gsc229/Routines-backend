@@ -87,7 +87,6 @@ const populateFirstLevel = (reqDotQuery) => {
   }
 
   if (populate_week) {
-    console.log("POPULATE WEEK".red, JSON.stringify(reqDotQuery, null, 2).blue)
     flatPopulates.push({
       path: "week",
       select: select_week
