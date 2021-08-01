@@ -1,0 +1,36 @@
+// remove non-search fields
+const removeFields = [
+  "select",
+  "sort",
+  "limit",
+  "page",
+  "populate_one",
+  "populate_two",
+  "populate_three",
+  "populate_four",
+  "select_one",
+  "select_two",
+  "select_three",
+  "populate_weeks",
+  "populate_set_groups",
+  "populate_exercise_sets",
+  "populate_exercises",
+  "populate_exercise_sets_exercise",
+  "populate_week",
+  "populate_set_group",
+  "populate_exercise",
+  "populate_routine",
+  "select_routine",
+  "select_weeks",
+  "select_set_groups",
+  "select_exercise_sets",
+  "select_exercises",
+  "select_exercise_sets_exercise",
+  "select_exercise",
+  "select_set_group",
+  "select_exercise",
+  "select_week",
+  "send_bulkwrite_data", // for updateRoutineDates, updateWeekDates, and copyRoutineFromTemplate
+];
+
+module.exports = removeFields

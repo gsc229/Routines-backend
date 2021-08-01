@@ -1,8 +1,10 @@
-const populateBuilder = require("../helpers/populateQuery");
-const advancedQueryBypass = require("../helpers/advancedQueryBypass");
+const nestPopulateBuilder = require("./helpers/nestPopulateBuilder");
+const firstLevelPopulateBuilder = require("./helpers/firstLevelPopulateBuilder");
+const advancedQueryBypass = require("./helpers/advancedQueryBypass");
+const removeFields = require("./helpers/removeFields");
 
 const advancedQuery = (model) => async (req, res, next) => {
-  //first parameter will be ids for the model to be queried, no need to know exerciseId, routineId etc.,
+  // first parameter will be ids for the model to be queried. Since we know the model, no need to know exerciseId, routineId etc.,
   // just put it in the query object as _id
   if (Object.entries(req.params).length && !req.query._id) {
     // doing it like this to be dynamic. There are many param id types, i.e. routineId, weekId etc.
@@ -10,39 +12,7 @@ const advancedQuery = (model) => async (req, res, next) => {
   }
 
   const reqQueryCopy = { ...req.query };
-  // remove non-search fields
-  const removeFields = [
-    "select",
-    "sort",
-    "limit",
-    "page",
-    "populate_one",
-    "populate_two",
-    "populate_three",
-    "populate_four",
-    "select_one",
-    "select_two",
-    "select_three",
-    "populate_weeks",
-    "populate_set_groups",
-    "populate_exercise_sets",
-    "populate_exercises",
-    "populate_exercise_sets_exercise",
-    "populate_week",
-    "populate_set_group",
-    "populate_exercise",
-    "select_weeks",
-    "select_set_groups",
-    "select_exercise_sets",
-    "select_exercises",
-    "select_exercise_sets_exercise",
-    "select_exercise",
-    "select_set_group",
-    "select_exercise",
-    "select_week",
-    "send_bulkwrite_data", // for updateRoutineDates, updateWeekDates, and copyRoutineFromTemplate
-  ];
-
+  // all fields not intened for the basic query (i.e. populate, sort, select etc.) must be added to ./helpers/removeFields
   removeFields.forEach((field) => delete reqQueryCopy[field]);
 
   let queryStr = JSON.stringify(reqQueryCopy);
@@ -56,112 +26,24 @@ const advancedQuery = (model) => async (req, res, next) => {
   let query = model.find(queryStr);
   /* ^^^^^^^^^^^^^^^^^ BASIC QUERY ^^^^^^^^^^^^^^^^^^^^^^^ */
   delete req.query._id;
-  // if the only query/param field provided was the resource's id, then bypass the rest of
-  // advance results
+  // if the only query/param field provided was the resource's id, then bypass the rest of advancedQuery
+  // note: req.query.resourceId becomes req.query._id (see notes above)
   if (Object.keys(req.query).length === 0) {
     advancedQueryBypass(query, res, next);
   }
-
+  // basic select for the target resource (i.e. /routines /routines/weeks /set-groups etc.)
   if (req.query.select) {
     const fields = req.query.select.split(",").join(" ");
     query = query.select(fields);
   }
 
   // nested populate
-  let nestedPopulate = populateBuilder(req.query);
-  if (nestedPopulate) query = query.populate(nestedPopulate);
-  //console.log({ nestedPopulate });
+  const nestedPopulates = nestPopulateBuilder(req.query);
+  if (nestedPopulates) query = query.populate(nestedPopulates);
+
   // first-level populates
-  // first-level (flat) populates and selects
-  if (req.query.populate_weeks) {
-    query = query.populate({
-      path: "weeks",
-      select: req.query.select_weeks
-        ? req.query.select_weeks.split(",").join(" ")
-        : "",
-    });
-  }
-
-  if (req.query.populate_set_groups) {
-    query = query.populate({
-      path: "set_groups",
-      select: req.query.select_set_groups
-        ? req.query.select_set_groups.split(",").join(" ")
-        : "",
-    });
-  }
-
-  if (req.query.populate_exercise_sets) {
-    query = query.populate({
-      path: "exercise_sets",
-      select: req.query.select_exercise_sets
-        ? req.query.select_exercise_sets.split(",").join(" ")
-        : "",
-    });
-  }
-
-  if (req.query.populate_exercise_sets_exercise) {
-    query = query.populate({
-      path: "exercise_sets",
-      select: req.query.select_exercise_sets
-        ? req.query.select_exercise_sets.split(",").join(" ")
-        : "",
-      populate: {
-        path: "exercise",
-        select: req.query.select_exercises
-          ? req.query.select_exercises.split(",").join(" ")
-          : req.query.select_exercise_sets_exercise
-          ? req.query.select_exercise_sets_exercise.split(",").join(" ")
-          : "",
-      },
-    });
-  }
-
-  if (req.query.populate_exercises) {
-    query = query.populate({
-      path: "exercises",
-      select: req.query.select_exercises
-        ? req.query.select_exercises.split(",").join(" ")
-        : "",
-    });
-  }
-
-  if (req.query.populate_exercise) {
-    query = query.populate({
-      path: "exercise",
-      select: req.query.select_exercise
-        ? req.query.select_exercise.split(",").join(" ")
-        : "",
-    });
-  }
-
-  if (req.query.populate_week) {
-    query = query.populate({
-      path: "week",
-      select: req.query.select_week
-        ? req.query.select_week.split(",").join(" ")
-        : "",
-    });
-  }
-
-  if (req.query.populate_set_group) {
-    query = query.populate({
-      path: "set_group",
-      select: req.query.select_set_group
-        ? req.query.select_set_group.split(",").join(" ")
-        : ""
-    });
-  }
-
-  if (req.query.populate_routine) {
-    query = query.populate({
-      path: "routine",
-      select: req.query.select_routine
-        ? req.query.select_routine.split(",").join(" ")
-        : "",
-    });
-  }
-
+  const firstLevelPopulates = firstLevelPopulateBuilder(req.query);
+  if (firstLevelPopulates) query = query.populate(firstLevelPopulates);
 
   // sort
   if (req.query.sort) {
