@@ -113,6 +113,15 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     await Week.bulkWrite(weekBulkWrites)
       .then((result) => bulkWriteResultsData.push({ weeks: result }))
       .catch((error) => {
+        Routine.deleteOne({ _id: NewRoutine._id })
+        .then((result) =>{
+          return res.status(500).json({
+            success: false,
+            message: `Something went wrong trying to bulk write weeks for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
+            error,
+            deleted: result
+          });
+        })
         return res.status(500).json({
           success: false,
           message: `Something went wrong trying to bulk write weeks for routine id: ${NewRoutine._id}`,
@@ -178,6 +187,15 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     await SetGroup.bulkWrite(setGroupBulkWrites)
       .then((result) => bulkWriteResultsData.push({ set_groups: result }))
       .catch((error) => {
+        Routine.deleteOne({ _id: NewRoutine._id })
+        .then((result) =>{
+          return res.status(500).json({
+            success: false,
+            message: `Something went wrong trying to bulk write set_groups for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
+            error,
+            deleted: result
+          });
+        })
         return res.status(500).json({
           success: false,
           message: `Something went wrong trying to bulk write set_groups for routine id: ${NewRoutine._id}`,
@@ -245,15 +263,23 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       });
     }
   });
-  console.log(
-    JSON.stringify({ exerciseSetsBulkWrites }, null, 2).bgBlue.yellow
-  );
-  console.log(JSON.stringify({ oldToNewSetGroupAndWeekIds }, null, 2).bgRed.yellow);
+  
 
   if (exerciseSetsBulkWrites.length) {
     await ExerciseSet.bulkWrite(exerciseSetsBulkWrites)
       .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
       .catch((error) => {
+
+        Routine.deleteOne({ _id: NewRoutine._id })
+        .then((result) =>{
+          return res.status(500).json({
+            success: false,
+            message: `Something went wrong trying to bulk write exercise_sets for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
+            error,
+            deleted: result
+          });
+        })
+
         return res.status(500).json({
           success: false,
           message: `Something went wrong trying to bulk write exercise_sets for routine id: ${NewRoutine._id}`,
