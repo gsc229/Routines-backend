@@ -1,19 +1,17 @@
-const express = require('express')
+const express = require("express");
 
 // bring in controllers
-const {getUser} = require('../controllers/users')
+const { getUser } = require("../controllers/users");
 
 // bring in models/schemas
 
 // bring in middlware variables
 
 // create router
-const router = express.Router()
+const router = express.Router();
 
 // routes
-router
-  .route('/:userId')
-  .get(getUser)
+router.route("/:userId").get(getUser);
 
 // export router
-module.exports = router
+module.exports = router;
