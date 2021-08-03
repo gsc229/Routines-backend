@@ -107,41 +107,45 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     }
   });
 
-  const oldToNewWeekIds = {};
+  if (!weekBulkWrites.length) {
+    if (req.query.send_bulkwrite_data) {
+      delete req.query.send_bulkwrite_data;
+      res.bulkWriteResultsData = bulkWriteResultsData;
+    }
+    return next();
+  }
 
-  if (weekBulkWrites.length) {
-    await Week.bulkWrite(weekBulkWrites)
-      .then((result) => bulkWriteResultsData.push({ weeks: result }))
-      .catch((error) => {
-        Routine.deleteOne({ _id: NewRoutine._id })
-        .then((result) =>{
-          return res.status(500).json({
-            success: false,
-            message: `Something went wrong trying to bulk write weeks for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
-            error,
-            deleted: result
-          });
-        })
+  await Week.bulkWrite(weekBulkWrites)
+    .then((result) => bulkWriteResultsData.push({ weeks: result }))
+    .catch((error) => {
+      Routine.deleteOne({ _id: NewRoutine._id }).then((result) => {
         return res.status(500).json({
           success: false,
-          message: `Something went wrong trying to bulk write weeks for routine id: ${NewRoutine._id}`,
+          message: `Something went wrong trying to bulk write weeks for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
           error,
+          deleted: result,
         });
       });
-
-    const NewWeeks = await Week.find({ routine: NewRoutine._id });
-
-    if (!NewWeeks.length)
       return res.status(500).json({
         success: false,
-        message: `Error bulkwriting new weeks from new routine with id: ${NewRoutine._id}`,
+        message: `Something went wrong trying to bulk write weeks for routine id: ${NewRoutine._id}`,
+        error,
       });
-
-    NewWeeks.forEach((new_week) => {
-      new_week = new_week.toObject();
-      oldToNewWeekIds[new_week.copied_from] = new_week._id;
     });
-  }
+
+  const NewWeeks = await Week.find({ routine: NewRoutine._id });
+
+  if (!NewWeeks.length)
+    return res.status(500).json({
+      success: false,
+      message: `Error bulkwriting new weeks from new routine with id: ${NewRoutine._id}`,
+    });
+
+  const oldToNewWeekIds = {};
+  NewWeeks.forEach((new_week) => {
+    new_week = new_week.toObject();
+    oldToNewWeekIds[new_week.copied_from] = new_week._id;
+  });
 
   /* ============ Copy Set Groups ========================== */
   const RoutineTemplateSetGroups = await SetGroup.find({
@@ -181,44 +185,48 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     }
   });
 
-  const oldToNewSetGroupAndWeekIds = {};
+  if (!setGroupBulkWrites.length) {
+    if (req.query.send_bulkwrite_data) {
+      delete req.query.send_bulkwrite_data;
+      res.bulkWriteResultsData = bulkWriteResultsData;
+    }
+    return next();
+  }
 
-  if (setGroupBulkWrites.length) {
-    await SetGroup.bulkWrite(setGroupBulkWrites)
-      .then((result) => bulkWriteResultsData.push({ set_groups: result }))
-      .catch((error) => {
-        Routine.deleteOne({ _id: NewRoutine._id })
-        .then((result) =>{
-          return res.status(500).json({
-            success: false,
-            message: `Something went wrong trying to bulk write set_groups for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
-            error,
-            deleted: result
-          });
-        })
+  await SetGroup.bulkWrite(setGroupBulkWrites)
+    .then((result) => bulkWriteResultsData.push({ set_groups: result }))
+    .catch((error) => {
+      Routine.deleteOne({ _id: NewRoutine._id }).then((result) => {
         return res.status(500).json({
           success: false,
-          message: `Something went wrong trying to bulk write set_groups for routine id: ${NewRoutine._id}`,
+          message: `Something went wrong trying to bulk write set_groups for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
           error,
+          deleted: result,
         });
       });
-
-    const NewSetGroups = await SetGroup.find({ routine: NewRoutine._id });
-
-    if (!NewSetGroups.length)
       return res.status(500).json({
         success: false,
-        message: `Error bulkwriting new set_groups for new routine with id: ${NewRoutine._id}`,
+        message: `Something went wrong trying to bulk write set_groups for routine id: ${NewRoutine._id}`,
+        error,
       });
-
-    NewSetGroups.forEach((new_set_group) => {
-      new_set_group = new_set_group.toObject();
-      oldToNewSetGroupAndWeekIds[new_set_group.copied_from] = {
-        set_group: new_set_group._id,
-        week: new_set_group.week,
-      };
     });
-  }
+
+  const NewSetGroups = await SetGroup.find({ routine: NewRoutine._id });
+
+  if (!NewSetGroups.length)
+    return res.status(500).json({
+      success: false,
+      message: `Error bulkwriting new set_groups for new routine with id: ${NewRoutine._id}`,
+    });
+
+  const oldToNewSetGroupAndWeekIds = {};
+  NewSetGroups.forEach((new_set_group) => {
+    new_set_group = new_set_group.toObject();
+    oldToNewSetGroupAndWeekIds[new_set_group.copied_from] = {
+      set_group: new_set_group._id,
+      week: new_set_group.week,
+    };
+  });
 
   /* ============== Copy Exercise Sets ============================ */
   const RoutineTemplateExerciseSets = await ExerciseSet.find({
@@ -252,10 +260,7 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
     delete newExerciseSet.updatedAt;
     delete newExerciseSet.__v;
 
-    if (
-      newExerciseSet.week &&
-      newExerciseSet.set_group
-    ) {
+    if (newExerciseSet.week && newExerciseSet.set_group) {
       exerciseSetsBulkWrites.push({
         insertOne: {
           document: newExerciseSet,
@@ -263,35 +268,38 @@ exports.copyRoutineTemplate = asyncHandler(async (req, res, next) => {
       });
     }
   });
-  
 
-  if (exerciseSetsBulkWrites.length) {
-    await ExerciseSet.bulkWrite(exerciseSetsBulkWrites)
-      .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
-      .catch((error) => {
-
-        Routine.deleteOne({ _id: NewRoutine._id })
-        .then((result) =>{
-          return res.status(500).json({
-            success: false,
-            message: `Something went wrong trying to bulk write exercise_sets for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
-            error,
-            deleted: result
-          });
-        })
-
-        return res.status(500).json({
-          success: false,
-          message: `Something went wrong trying to bulk write exercise_sets for routine id: ${NewRoutine._id}`,
-          error,
-        });
-      });
-
+  if (!exerciseSetsBulkWrites.length) {
     if (req.query.send_bulkwrite_data) {
       delete req.query.send_bulkwrite_data;
       res.bulkWriteResultsData = bulkWriteResultsData;
     }
+    return next();
   }
 
-  next();
+  await ExerciseSet.bulkWrite(exerciseSetsBulkWrites)
+    .then((result) => bulkWriteResultsData.push({ exercise_sets: result }))
+    .catch((error) => {
+      Routine.deleteOne({ _id: NewRoutine._id }).then((result) => {
+        return res.status(500).json({
+          success: false,
+          message: `Something went wrong trying to bulk write exercise_sets for new routine id: ${NewRoutine._id}. Aborting copy routine.`,
+          error,
+          deleted: result,
+        });
+      });
+
+      return res.status(500).json({
+        success: false,
+        message: `Something went wrong trying to bulk write exercise_sets for routine id: ${NewRoutine._id}`,
+        error,
+      });
+    });
+
+  if (req.query.send_bulkwrite_data) {
+    delete req.query.send_bulkwrite_data;
+    res.bulkWriteResultsData = bulkWriteResultsData;
+  }
+
+  return next();
 }); /* END */

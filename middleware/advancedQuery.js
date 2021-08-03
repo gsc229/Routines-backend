@@ -17,7 +17,7 @@ const advancedQuery = (model) => async (req, res, next) => {
 
   let queryStr = JSON.stringify(reqQueryCopy);
   queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
+    /\b(gt|gte|lt|lte|in|ne)\b/g,
     (match) => `$${match}`
   );
 
