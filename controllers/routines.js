@@ -82,7 +82,7 @@ exports.getFlattenedRoutine = asyncHandler(async (req, res) => {
 // @route   PUT /api/v1.0/routines/routine/:routineId
 // @access  Private
 exports.editRoutine = asyncHandler(async (req, res) => {
-  console.log("editRoutine\n ".red, { body: req.body, params: req.params });
+
   await Routine.findByIdAndUpdate(
     req.params.routineId, // id
     req.body, // changes
@@ -90,7 +90,6 @@ exports.editRoutine = asyncHandler(async (req, res) => {
 
     (err, routine) => {
       // callback
-      console.log({ err, routine });
       if (err) {
         return res
           .status(400)
@@ -102,7 +101,6 @@ exports.editRoutine = asyncHandler(async (req, res) => {
       }
 
       if (routine) {
-        console.log({ routine, reqBody: req.body });
         return res.status(201).send({ success: true, data: routine });
       }
 
@@ -113,7 +111,7 @@ exports.editRoutine = asyncHandler(async (req, res) => {
           error_message: `No routine found with id of ${req.params.routineId}`,
         });
     }
-  );
+  ).select(req.query.select)
 });
 
 // @desc    Delete a routine and all it's children
@@ -149,6 +147,9 @@ exports.deleteRoutine = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Returns updated routines after the updateRoutines PUT request
+// @route   PUT /update-routine-dates/:routineId
+// @access  Private
 exports.getUpdatedRoutine = asyncHandler(async (req, res) => {
   const bulkWriteResultsData = res.bulkWriteResultsData;
 
