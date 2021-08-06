@@ -214,13 +214,6 @@ exports.getWeekById = asyncHandler(async (req, res) => {
 // @route   PUT /api/v1.0/routines/weeks/:weekId
 // @access  Private
 exports.editWeek = asyncHandler(async (req, res) => {
-  /* if(req.body.week_number || req.body.week_start_date){
-    return res.status(400).json({
-      success: false,
-      message: `You cannot edit week_number or week_start_date through PUT routines/weeks/:weekId.
-      Use PUT /routines/weeks/update-week-dates/:weekId`
-    })
-  } */
 
   await Week.findByIdAndUpdate(
     req.params.weekId, // id
@@ -251,7 +244,7 @@ exports.editWeek = asyncHandler(async (req, res) => {
           error_message: `No week found with id of ${req.params.weekId}`,
         });
     }
-  );
+  ).select(req.query.select)
 });
 
 // @desc    Edit multiple weeks by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]

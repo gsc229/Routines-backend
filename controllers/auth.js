@@ -5,9 +5,8 @@ const ErrorResponse = require("../utils/errorResponse");
 // @desc    Create a new user
 // @route   POST /api/v1.0/auth/create-user
 // @access  Public
-exports.createUser = asyncHandler(async (req, res, next) => {
-  const { email, password, username } = req.body;
-  console.log("createUser: body:", req.body);
+exports.createUser = asyncHandler(async (req, res) => {
+  //const { email, password, username } = req.body;
 
   const newUser = new User(req.body);
 
@@ -29,7 +28,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 // @desc    Login user
 // @route   POST /api/v1.0/auth/login
 // @access  Public
-exports.loginUser = asyncHandler(async (req, res, next) => {
+exports.loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {

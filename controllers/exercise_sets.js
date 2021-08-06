@@ -4,7 +4,6 @@ const Week = require("../models/RoutineWeek");
 const SetGroup = require("../models/SetGroup");
 const ExerciseSet = require("../models/ExerciseSet");
 const asyncHandler = require("../middleware/asyncHandler");
-const { response } = require("express");
 /* ============================ Exercise Sets ================================================= */
 /* ============================ Exercise Sets ================================================= */
 /* ============================ Exercise Sets ================================================= */
@@ -13,8 +12,8 @@ const { response } = require("express");
 // @desc    Create a new exercise set for a routine (differen from exercise) - required fields: exercise, routine, week and user ids
 // @route   POST /api/v1.0/exercise-set
 // @access  Private
-exports.createExerciseSet = asyncHandler(async (req, res, next) => {
-  const { exercise, routine, week, day, user, set_group } = req.body;
+exports.createExerciseSet = asyncHandler(async (req, res) => {
+  const { exercise, routine, week, set_group } = req.body;
 
   // Check if exercise, routine and week exists
   const foundExercise = await Exercise.findById(exercise);
@@ -81,7 +80,7 @@ exports.createExerciseSet = asyncHandler(async (req, res, next) => {
 // @desc    Create a new exercise set for a routine (differen from exercise) - required fields: exercise, routine, week and user ids
 // @route   POST /api/v1.0/exercise-set/create-many
 // @access  Private
-exports.createManyExerciseSets = asyncHandler(async (req, res, next) => {
+exports.createManyExerciseSets = asyncHandler(async (req, res) => {
   console.log("createManyExerciseSets req.body", req.body);
 
   const { routine, week, set_group } = req.body[0];
@@ -131,7 +130,7 @@ exports.createManyExerciseSets = asyncHandler(async (req, res, next) => {
   // INSERT MANY
   const newSets = await ExerciseSet.insertMany(req.body);
 
-  console.log(JSON.stringify({ newSets }, "", 2).bgYellow);
+
 
   if (newSets) {
     const newSetsPopulateExercise = await ExerciseSet.find({
@@ -148,29 +147,28 @@ exports.createManyExerciseSets = asyncHandler(async (req, res, next) => {
     .status(400)
     .send({
       success: false,
-      error_message: error.message,
-      error_name: error.name,
+      error_message: "There was a problem creating exercise sets"
     });
 });
 
 // @desc    Get all exercise sets
 // @route   GET /api/v1.0/set-groups/exercises-sets
 // @access  Private
-exports.getAllExerciseSets = asyncHandler(async (req, res, next) => {
+exports.getAllExerciseSets = asyncHandler(async (req, res) => {
   return res.status(200).send(res.advancedResults);
 });
 
 // @desc    Get a exercise set by ID
 // @route   GET /api/v1.0/set-groups/exercises-sets/:exerciseSetId
 // @access  Private
-exports.getExerciseSetById = asyncHandler(async (req, res, next) => {
+exports.getExerciseSetById = asyncHandler(async (req, res) => {
   return res.status(200).send(res.advancedResults);
 });
 
 // @desc    Edit a exercise set by ID
 // @route   PUT /api/v1.0/exercise-sets/:exerciseSetId
 // @access  Private
-exports.editExerciseSet = asyncHandler(async (req, res, next) => {
+exports.editExerciseSet = asyncHandler(async (req, res) => {
   console.log("editExerciseSet".bgMagenta);
   await ExerciseSet.findByIdAndUpdate(
     req.params.exerciseSetId, // id
@@ -206,7 +204,7 @@ exports.editExerciseSet = asyncHandler(async (req, res, next) => {
 // @desc    Edit multiple exercise sets by IDs [{update: {filter: {_id: _id}, update: {some_key: 'some value' } } }, ...{..}]
 // @route   PUT /api/v1.0/exercise-sets/bulk-edit
 // @access  Private
-exports.bulkWriteExerciseSets = asyncHandler(async (req, res, next) => {
+exports.bulkWriteExerciseSets = asyncHandler(async (req, res) => {
   console.log(JSON.stringify(req.body, "", 2).bgRed);
 
   const { updatesArray, findByObj } = req.body; // findBy === {set_group: setGroupId} || {week: weekId} || {routine: rotuineId}
@@ -254,7 +252,7 @@ exports.bulkWriteExerciseSets = asyncHandler(async (req, res, next) => {
 // @desc    Delete a routine excercises
 // @route   DELTE /api/v1.0/set-groups/exercises-sets/:exerciseSetId
 // @access  Private
-exports.deleteExerciseSets = asyncHandler(async (req, res, next) => {
+exports.deleteExerciseSets = asyncHandler(async (req, res) => {
   const exerciseSet = await ExerciseSet.findById(req.params.exerciseSetId);
 
   if (!exerciseSet) {

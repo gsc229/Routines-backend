@@ -1,12 +1,10 @@
 const Exercise = require("../models/Exercise.js");
-const User = require("../models/User");
-const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/asyncHandler");
 
 // @desc    Create a new exercise
 // @route   POST /api/v1.0/exercises
 // @access  Private
-exports.createExercise = asyncHandler(async (req, res, next) => {
+exports.createExercise = asyncHandler(async (req, res) => {
   const { original_creator } = req.body;
 
   if (!original_creator) {
@@ -36,21 +34,21 @@ exports.createExercise = asyncHandler(async (req, res, next) => {
 // @desc    Get all excercises
 // @route   GET /api/v1.0/exercises
 // @access  Private
-exports.getAllExercises = asyncHandler(async (req, res, next) => {
+exports.getAllExercises = asyncHandler(async (req, res) => {
   res.status(200).send(res.advancedResults);
 });
 
 // @desc    Get exercise by ID
 // @route   GET /api/v1.0/exercises/:exerciseId
 // @access  Private
-exports.getExerciseById = asyncHandler(async (req, res, next) => {
+exports.getExerciseById = asyncHandler(async (req, res) => {
   res.status(200).send(res.advancedResults);
 });
 
 // @desc    Edit exercise
 // @route   PUT /api/v1.0/exercises/:exerciseId
 // @access  Private
-exports.editExercise = asyncHandler(async (req, res, next) => {
+exports.editExercise = asyncHandler(async (req, res) => {
   await Exercise.findByIdAndUpdate(
     req.params.exerciseId, // id
     req.body, // changes
@@ -80,13 +78,13 @@ exports.editExercise = asyncHandler(async (req, res, next) => {
           error_message: `No exercise found with id of ${req.params.exerciseId}`,
         });
     }
-  );
+  ).select(req.query.select)
 });
 
 // @desc    Delete an excercise
 // @route   DELTE /api/v1.0/exercises/:exerciseId
 // @access  Private
-exports.deleteExercises = asyncHandler(async (req, res, next) => {
+exports.deleteExercises = asyncHandler(async (req, res) => {
   const exercise = await Exercise.findById(req.params.exerciseId);
 
   if (!exercise) {
