@@ -37,6 +37,7 @@ const ExerciseSet_Schema = new mongoose.Schema(
     exercise_name: {
       type: String,
       trim: true,
+      required: [true, "Must provide the name of the exercise"]
     },
     color: {
       type: String,
