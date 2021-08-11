@@ -11,6 +11,7 @@ const {
   editExerciseSet,
   bulkWriteExerciseSets,
 } = require("../controllers/exercise_sets");
+const { getExerciseSetRecords } = require("../controllers/exercise_set_records")
 // bring in models/schemas
 const ExerciseSet = require("../models/ExerciseSet");
 
@@ -24,6 +25,9 @@ router
   .route("/")
   .post(createExerciseSet)
   .get(advancedQuery(ExerciseSet), getAllExerciseSets);
+
+router.route("/records").get(getExerciseSetRecords);
+router.route("/records/:userId").get(getExerciseSetRecords);
 
 router.route("/create-many").post(createManyExerciseSets);
 
