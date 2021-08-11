@@ -152,14 +152,14 @@ exports.createManyExerciseSets = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all exercise sets
-// @route   GET /api/v1.0/set-groups/exercises-sets
+// @route   GET /api/v1.0/exercises-sets
 // @access  Private
 exports.getAllExerciseSets = asyncHandler(async (req, res) => {
   return res.status(200).send(res.advancedResults);
 });
 
 // @desc    Get a exercise set by ID
-// @route   GET /api/v1.0/set-groups/exercises-sets/:exerciseSetId
+// @route   GET /api/v1.0/exercises-sets/:exerciseSetId
 // @access  Private
 exports.getExerciseSetById = asyncHandler(async (req, res) => {
   return res.status(200).send(res.advancedResults);
@@ -250,7 +250,7 @@ exports.bulkWriteExerciseSets = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete a routine excercises
-// @route   DELTE /api/v1.0/set-groups/exercises-sets/:exerciseSetId
+// @route   DELTE /api/v1.0/exercises-sets/:exerciseSetId
 // @access  Private
 exports.deleteExerciseSets = asyncHandler(async (req, res) => {
   const exerciseSet = await ExerciseSet.findById(req.params.exerciseSetId);
