@@ -4,7 +4,7 @@ const { updateWeekDates } = require("../middleware/updateWeekDates");
 const {
   validateCopyRoutineBody,
   copyRoutineTemplate,
-} = require("../middleware/copyRoutineTemplate");
+} = require("../middleware/copyRoutine");
 // bring in controllers
 const {
   createRoutine,
@@ -50,7 +50,17 @@ router
   .put(updateRoutineDates, advancedQuery(Routine), getUpdatedRoutine);
 
 router
-  .route("/copy-from-template")
+  .route("/activate-template")
+  .post(
+    validateCopyRoutineBody,
+    copyRoutineTemplate,
+    updateRoutineDates,
+    advancedQuery(Routine),
+    getUpdatedRoutine
+  );
+  
+  router
+  .route("/copy-routine")
   .post(
     validateCopyRoutineBody,
     copyRoutineTemplate,

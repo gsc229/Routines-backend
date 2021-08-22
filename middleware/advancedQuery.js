@@ -20,7 +20,7 @@ const advancedQuery = (model) => async (req, res, next) => {
     /\b(gt|gte|lt|lte|in|ne)\b/g,
     (match) => `$${match}`
   );
-
+  
   queryStr = JSON.parse(queryStr);
 
   let query = model.find(queryStr);

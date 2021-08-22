@@ -17,7 +17,7 @@ All set_groups and exercise_sets will be moved one week past their scheduled_dat
 // @route   PUT /routines/weeks/update-week-dates/:weekId
 // @access  Private
 exports.updateWeekDates = asyncHandler(async (req, res, next) => {
-  const weekId = req.params.weekId;
+  const weekId = req.params.weekId || req.body.weekId;
   const newWeekNumber = parseInt(req.body.week_number); // week numbers are NOT zero indexed, they start at 1
 
   if (!newWeekNumber || Number.isNaN(newWeekNumber))

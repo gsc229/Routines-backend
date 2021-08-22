@@ -46,6 +46,7 @@ app.use("/api/v1.0/exercises", exerciseRoutes);
 app.use("/api/v1.0/routines", routineRoutes);
 app.use("/api/v1.0/set-groups", setGroups);
 app.use("/api/v1.0/exercise-sets", exerciseSets);
+app.use("/api/v1.0/bulkwrite", exerciseSets);
 app.use("/api/v1.0/query-tester", queryTester);
 
 // test route
